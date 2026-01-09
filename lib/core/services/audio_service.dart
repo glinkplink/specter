@@ -9,6 +9,8 @@ class AudioService {
   AudioPlayer? _ambientPlayer;
   AudioPlayer? _effectPlayer;
   AudioPlayer? _tickPlayer;
+  AudioPlayer? _radioStaticPlayer;
+  AudioPlayer? _wordBlipPlayer;
 
   Timer? _tickTimer;
   bool _isInitialized = false;
@@ -19,14 +21,19 @@ class AudioService {
     _ambientPlayer = AudioPlayer();
     _effectPlayer = AudioPlayer();
     _tickPlayer = AudioPlayer();
+    _radioStaticPlayer = AudioPlayer();
+    _wordBlipPlayer = AudioPlayer();
 
     try {
       await _ambientPlayer!.setAsset('assets/audio/ambient_static.mp3');
       await _effectPlayer!.setAsset('assets/audio/spike_alert.mp3');
       await _tickPlayer!.setAsset('assets/audio/geiger_tick.mp3');
+      await _radioStaticPlayer!.setAsset('assets/audio/radio_static.mp3');
+      await _wordBlipPlayer!.setAsset('assets/audio/word_blip.mp3');
 
-      // Set ambient to loop
+      // Set ambient and radio static to loop
       await _ambientPlayer!.setLoopMode(LoopMode.one);
+      await _radioStaticPlayer!.setLoopMode(LoopMode.one);
 
       _isInitialized = true;
     } catch (e) {
@@ -116,15 +123,51 @@ class AudioService {
     }
   }
 
+  // Spirit Box audio methods
+  Future<void> playRadioStatic({double volume = 0.3}) async {
+    if (!_isInitialized) await initialize();
+
+    try {
+      await _radioStaticPlayer?.setVolume(volume);
+      await _radioStaticPlayer?.play();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
+  Future<void> stopRadioStatic() async {
+    try {
+      await _radioStaticPlayer?.stop();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
+  Future<void> playWordBlip() async {
+    if (!_isInitialized) await initialize();
+
+    try {
+      await _wordBlipPlayer?.seek(Duration.zero);
+      await _wordBlipPlayer?.setVolume(0.5);
+      await _wordBlipPlayer?.play();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
   Future<void> dispose() async {
     _tickTimer?.cancel();
     await _ambientPlayer?.dispose();
     await _effectPlayer?.dispose();
     await _tickPlayer?.dispose();
+    await _radioStaticPlayer?.dispose();
+    await _wordBlipPlayer?.dispose();
 
     _ambientPlayer = null;
     _effectPlayer = null;
     _tickPlayer = null;
+    _radioStaticPlayer = null;
+    _wordBlipPlayer = null;
     _isInitialized = false;
   }
 }

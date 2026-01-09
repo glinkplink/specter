@@ -12,6 +12,11 @@ class AppColors {
   static const midGray = Color(0xFF2A2A2F);
   static const lightGray = Color(0xFF4A4A4F);
 
+  // EMF Zone colors
+  static const zoneSafe = Color(0xFF10B981); // Green
+  static const zoneModerate = Color(0xFFFF8C00); // Orange
+  static const zoneActive = Color(0xFFEF4444); // Red
+
   // Prevent instantiation
   AppColors._();
 }

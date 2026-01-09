@@ -29,6 +29,11 @@ class _NavigationShellState extends State<NavigationShell> {
       label: 'Scan',
     ),
     NavigationDestination(
+      icon: Icon(Icons.graphic_eq_outlined),
+      selectedIcon: Icon(Icons.graphic_eq),
+      label: 'Spirit Box',
+    ),
+    NavigationDestination(
       icon: Icon(Icons.forum_outlined),
       selectedIcon: Icon(Icons.forum),
       label: 'Commune',
@@ -43,6 +48,7 @@ class _NavigationShellState extends State<NavigationShell> {
   final List<String> _routes = [
     '/home',
     '/scan',
+    '/spirit-box',
     '/commune',
     '/settings',
   ];

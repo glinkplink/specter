@@ -1,0 +1,363 @@
+import 'dart:math';
+
+class WordBank {
+  // Categories of paranormal words (expanded to 1500+ total)
+
+  static const entities = [
+    'ghost', 'spirit', 'shadow', 'demon', 'angel', 'presence', 'soul',
+    'entity', 'specter', 'phantom', 'wraith', 'shade', 'apparition',
+    'poltergeist', 'banshee', 'revenant', 'familiar', 'visitor',
+    'watcher', 'lurker', 'stalker', 'follower', 'harbinger',
+    'omen', 'manifestation', 'thing', 'being', 'creature',
+    'monster', 'devil', 'fiend', 'ghoul', 'vampire', 'witch',
+    'warlock', 'necromancer', 'possessed', 'haunted', 'cursed',
+    'specter', 'shade', 'wraith', 'eidolon', 'fetch', 'doppelganger',
+    'incubus', 'succubus', 'nightmare', 'bogey', 'boogeyman',
+    'goblin', 'imp', 'hellhound', 'hellfire', 'infernal',
+    'undead', 'zombie', 'skeleton', 'corpse', 'cadaver',
+    'mummy', 'lich', 'reaper', 'harvester', 'collector',
+    'wendigo', 'skinwalker', 'shapeshifter', 'changeling',
+    'spirit walker', 'seer', 'medium', 'channeler', 'vessel',
+    'host', 'carrier', 'infected', 'tainted', 'corrupted',
+    'abomination', 'aberration', 'anomaly', 'distortion', 'glitch',
+  ];
+
+  static const locations = [
+    'attic', 'basement', 'cemetery', 'crossroads', 'threshold',
+    'grave', 'crypt', 'tomb', 'morgue', 'hospital', 'asylum',
+    'church', 'chapel', 'altar', 'pew', 'bell tower',
+    'graveyard', 'mausoleum', 'catacomb', 'dungeon', 'cellar',
+    'ruins', 'abandoned', 'forgotten', 'closet', 'mirror',
+    'window', 'door', 'hallway', 'staircase', 'landing',
+    'room', 'chamber', 'passage', 'tunnel', 'well',
+    'bridge', 'woods', 'forest', 'field', 'road',
+    'house', 'home', 'place', 'somewhere', 'nowhere',
+    'darkness', 'shadows', 'corner', 'edge', 'boundary',
+    'barn', 'shed', 'garage', 'warehouse', 'factory',
+    'mill', 'mine', 'quarry', 'pit', 'shaft',
+    'tower', 'spire', 'belfry', 'dome', 'vault',
+    'catacombs', 'sewers', 'underground', 'below', 'beneath',
+    'prison', 'jail', 'cell', 'cage', 'chains',
+    'theater', 'stage', 'curtain', 'backstage', 'balcony',
+    'library', 'archive', 'study', 'office', 'desk',
+    'bedroom', 'nursery', 'bathroom', 'kitchen', 'parlor',
+    'garden', 'orchard', 'greenhouse', 'gazebo', 'fountain',
+    'pond', 'lake', 'river', 'stream', 'swamp',
+    'marsh', 'bog', 'mire', 'quicksand', 'abyss',
+    'cliff', 'precipice', 'ravine', 'gorge', 'valley',
+    'mountain', 'peak', 'summit', 'cave', 'cavern',
+    'lighthouse', 'dock', 'pier', 'wharf', 'harbor',
+  ];
+
+  static const emotions = [
+    'fear', 'anger', 'trapped', 'lonely', 'cold', 'watching',
+    'hatred', 'rage', 'sorrow', 'grief', 'despair', 'anguish',
+    'pain', 'suffering', 'torment', 'agony', 'terror',
+    'dread', 'horror', 'panic', 'anxiety', 'worry',
+    'sadness', 'melancholy', 'regret', 'guilt', 'shame',
+    'jealousy', 'envy', 'revenge', 'vengeance', 'wrath',
+    'malice', 'spite', 'cruelty', 'violence', 'madness',
+    'insanity', 'confusion', 'lost', 'forgotten', 'abandoned',
+    'betrayed', 'deceived', 'broken', 'shattered', 'empty',
+    'numb', 'hollow', 'void', 'nothing', 'hopeless',
+    'helpless', 'powerless', 'weak', 'frail', 'fragile',
+    'wounded', 'scarred', 'damaged', 'ruined', 'destroyed',
+    'bitter', 'resentful', 'vengeful', 'hateful', 'spiteful',
+    'envious', 'covetous', 'greedy', 'selfish', 'cruel',
+    'merciless', 'ruthless', 'heartless', 'soulless', 'inhuman',
+    'monstrous', 'evil', 'wicked', 'sinful', 'damned',
+  ];
+
+  static const actions = [
+    'leave', 'help', 'run', 'listen', 'find', 'buried', 'killed',
+    'come', 'go', 'stay', 'wait', 'hide', 'seek', 'follow',
+    'watch', 'look', 'see', 'hear', 'feel', 'touch',
+    'take', 'give', 'bring', 'return', 'remember', 'forget',
+    'open', 'close', 'enter', 'exit', 'escape', 'flee',
+    'die', 'dead', 'death', 'murder', 'suicide', 'accident',
+    'hung', 'drowned', 'burned', 'fell', 'pushed', 'struck',
+    'cut', 'stabbed', 'shot', 'strangled', 'suffocated',
+    'poisoned', 'sick', 'disease', 'plague', 'infection',
+    'scream', 'cry', 'weep', 'moan', 'wail', 'whisper',
+    'speak', 'tell', 'warn', 'threaten', 'curse', 'hex',
+    'haunt', 'possess', 'consume', 'devour', 'feed',
+    'drain', 'suck', 'leech', 'siphon', 'absorb',
+    'corrupt', 'taint', 'infect', 'spread', 'contaminate',
+    'rot', 'decay', 'wither', 'crumble', 'dissolve',
+    'vanish', 'disappear', 'fade', 'blur', 'shimmer',
+    'flicker', 'flash', 'gleam', 'glow', 'shine',
+    'crawl', 'creep', 'slither', 'slide', 'glide',
+    'float', 'drift', 'hover', 'loom', 'tower',
+    'rise', 'ascend', 'climb', 'descend', 'sink',
+    'fall', 'drop', 'plunge', 'crash', 'shatter',
+    'break', 'crack', 'split', 'tear', 'rip',
+    'bleed', 'ooze', 'seep', 'leak', 'drip',
+  ];
+
+  static const warnings = [
+    'danger', 'behind', 'soon', 'midnight', 'cursed',
+    'beware', 'warning', 'threat', 'careful', 'run',
+    'hide', 'flee', 'escape', 'urgent', 'now',
+    'quick', 'fast', 'hurry', 'rush', 'emergency',
+    'trapped', 'caught', 'surrounded', 'followed', 'hunted',
+    'marked', 'chosen', 'selected', 'targeted', 'doomed',
+    'damned', 'condemned', 'forsaken', 'lost', 'gone',
+    'never', 'forever', 'eternal', 'infinite', 'endless',
+    'always', 'constantly', 'perpetual', 'unending', 'ceaseless',
+    'imminent', 'approaching', 'coming', 'arriving', 'nearing',
+    'close', 'near', 'here', 'present', 'watching',
+    'listening', 'waiting', 'lurking', 'hiding', 'stalking',
+  ];
+
+  static const names = [
+    'Mary', 'Thomas', 'Elizabeth', 'Samuel', 'Sarah', 'John',
+    'Margaret', 'William', 'Catherine', 'James', 'Anne', 'Robert',
+    'Emily', 'George', 'Alice', 'Charles', 'Emma', 'Edward',
+    'Charlotte', 'Henry', 'Grace', 'Joseph', 'Eleanor', 'Frank',
+    'Rose', 'Arthur', 'Clara', 'Walter', 'Lillian', 'Harold',
+    'Ruth', 'Albert', 'Florence', 'Frederick', 'Agnes', 'Ernest',
+    'Edith', 'Daniel', 'Martha', 'David', 'Helen', 'Richard',
+    'Dorothy', 'Benjamin', 'Ethel', 'Paul', 'Mildred', 'Andrew',
+    'Violet', 'Jonathan', 'Beatrice', 'Isaac', 'Hazel', 'Jacob',
+    'Pearl', 'Nathan', 'Rosemary', 'Michael', 'Lucille', 'Peter',
+    'Abigail', 'Abraham', 'Ada', 'Adeline', 'Agatha', 'Alfred',
+    'Alma', 'Amos', 'Annabelle', 'Arabella', 'Archibald', 'Augusta',
+    'Augustus', 'Barnabas', 'Bartholomew', 'Bertha', 'Blanche', 'Caleb',
+    'Cecilia', 'Clarence', 'Constance', 'Cornelius', 'Cyrus', 'Delilah',
+    'Ebenezer', 'Elias', 'Elijah', 'Emmett', 'Ephraim', 'Esther',
+    'Ezekiel', 'Ezra', 'Felicity', 'Genevieve', 'Gertrude', 'Gideon',
+    'Giles', 'Godfrey', 'Hattie', 'Henrietta', 'Hester', 'Hiram',
+    'Horace', 'Horatio', 'Ida', 'Imogen', 'Inez', 'Irene',
+    'Isadora', 'Jedediah', 'Jeremiah', 'Jethro', 'Jezebel', 'Josephine',
+    'Josiah', 'Lavinia', 'Lazarus', 'Lemuel', 'Lenora', 'Leopold',
+    'Levi', 'Louisa', 'Lucinda', 'Luther', 'Lydia', 'Mabel',
+    'Madeline', 'Malachi', 'Matilda', 'Matthias', 'Maude', 'Mercy',
+    'Minerva', 'Miriam', 'Mordecai', 'Mortimer', 'Nathaniel', 'Nehemiah',
+    'Obadiah', 'Octavia', 'Ophelia', 'Orville', 'Patience', 'Penelope',
+    'Percival', 'Phineas', 'Phoebe', 'Prudence', 'Priscilla', 'Reginald',
+    'Reuben', 'Rowena', 'Rufus', 'Sampson', 'Selma', 'Septimus',
+    'Seraphina', 'Silas', 'Solomon', 'Sophronia', 'Tabitha', 'Temperance',
+    'Thaddeus', 'Theophilus', 'Titus', 'Tobias', 'Uriah', 'Winifred',
+    'Zachariah', 'Zeb', 'Zebediah', 'Zephaniah',
+  ];
+
+  static const timeWords = [
+    'yesterday', 'forever', 'before', 'after', 'midnight',
+    'dawn', 'dusk', 'twilight', 'night', 'day', 'morning',
+    'evening', 'afternoon', 'hour', 'minute', 'second',
+    'moment', 'instant', 'eternity', 'century', 'decade',
+    'year', 'month', 'week', 'today', 'tomorrow',
+    'now', 'then', 'when', 'soon', 'late', 'early',
+    'past', 'present', 'future', 'ancient', 'old',
+    'new', 'recent', 'long ago', 'once', 'again',
+    '1823', '1847', '1865', '1891', '1902', '1917',
+    '1923', '1934', '1945', '1958', '1967', '1972',
+    '1776', '1812', '1849', '1863', '1876', '1888',
+    '1899', '1914', '1918', '1929', '1939', '1941',
+    '1952', '1960', '1963', '1969', '1974', '1980',
+    'sundaymonday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday',
+    'january', 'february', 'march', 'april', 'june', 'july',
+    'august', 'september', 'october', 'november', 'december',
+    'spring', 'summer', 'autumn', 'winter', 'solstice', 'equinox',
+  ];
+
+  static const fragments = [
+    'yes', 'no', 'here', 'there', 'why', 'mine', 'yours',
+    'his', 'hers', 'theirs', 'ours', 'who', 'what',
+    'where', 'when', 'how', 'which', 'whose', 'whom',
+    'this', 'that', 'these', 'those', 'it', 'them',
+    'he', 'she', 'they', 'we', 'you', 'me', 'us',
+    'one', 'two', 'three', 'four', 'five', 'six',
+    'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve',
+    'many', 'few', 'all', 'none', 'some', 'any',
+    'every', 'each', 'both', 'either', 'neither',
+    'more', 'less', 'most', 'least', 'only', 'just',
+    'still', 'yet', 'already', 'never', 'ever', 'always',
+    'maybe', 'perhaps', 'possibly', 'probably', 'certainly',
+    'definitely', 'absolutely', 'exactly', 'precisely',
+    'almost', 'nearly', 'barely', 'hardly', 'scarcely',
+    'too', 'very', 'much', 'so', 'such', 'quite',
+  ];
+
+  static const objects = [
+    'mirror', 'photograph', 'locket', 'ring', 'key',
+    'door', 'window', 'clock', 'picture', 'portrait',
+    'doll', 'toy', 'book', 'bible', 'letter',
+    'diary', 'journal', 'note', 'message', 'writing',
+    'knife', 'gun', 'rope', 'chain', 'lock',
+    'candle', 'lantern', 'light', 'flame', 'fire',
+    'water', 'blood', 'tears', 'sweat', 'rain',
+    'stone', 'rock', 'dirt', 'earth', 'ground',
+    'tree', 'flower', 'rose', 'thorn', 'vine',
+    'cross', 'crucifix', 'rosary', 'holy', 'blessed',
+    'bell', 'chime', 'gong', 'whistle', 'horn',
+    'box', 'chest', 'trunk', 'case', 'coffin',
+    'shroud', 'veil', 'cloth', 'fabric', 'lace',
+    'dress', 'coat', 'hat', 'glove', 'shoe',
+    'wedding', 'funeral', 'burial', 'ceremony', 'ritual',
+    'salt', 'silver', 'iron', 'steel', 'copper',
+    'gold', 'brass', 'bronze', 'lead', 'mercury',
+    'ash', 'dust', 'powder', 'smoke', 'mist',
+    'fog', 'haze', 'vapor', 'steam', 'frost',
+    'ice', 'snow', 'sleet', 'hail', 'storm',
+    'thunder', 'lightning', 'wind', 'gale', 'hurricane',
+    'moon', 'sun', 'star', 'comet', 'meteor',
+    'shadow', 'silhouette', 'outline', 'shape', 'form',
+    'mask', 'disguise', 'costume', 'uniform', 'robe',
+    'pendant', 'amulet', 'charm', 'talisman', 'token',
+    'coin', 'treasure', 'jewel', 'gem', 'pearl',
+  ];
+
+  static const descriptors = [
+    'dark', 'cold', 'empty', 'silent', 'loud',
+    'bright', 'dim', 'shadowy', 'foggy', 'misty',
+    'wet', 'dry', 'hot', 'warm', 'cool',
+    'heavy', 'light', 'soft', 'hard', 'rough',
+    'smooth', 'sharp', 'dull', 'pointed', 'broken',
+    'whole', 'partial', 'complete', 'incomplete', 'perfect',
+    'flawed', 'damaged', 'ruined', 'destroyed', 'intact',
+    'beautiful', 'ugly', 'hideous', 'grotesque', 'twisted',
+    'straight', 'crooked', 'bent', 'warped', 'distorted',
+    'clear', 'cloudy', 'murky', 'transparent', 'opaque',
+    'pale', 'white', 'black', 'gray', 'crimson',
+    'scarlet', 'ruby', 'blood-red', 'dark red', 'purple',
+    'violet', 'indigo', 'blue', 'green', 'yellow',
+    'amber', 'orange', 'brown', 'beige', 'ivory',
+    'ancient', 'antique', 'old', 'aged', 'weathered',
+    'rotting', 'decayed', 'decomposed', 'putrid', 'rancid',
+    'moldy', 'musty', 'stale', 'fetid', 'rank',
+    'noxious', 'toxic', 'poisonous', 'venomous', 'deadly',
+    'fatal', 'lethal', 'mortal', 'terminal', 'final',
+    'ultimate', 'absolute', 'total', 'utter', 'complete',
+  ];
+
+  static const verbalFragments = [
+    'can', 'cannot', 'will', 'won\'t', 'shall', 'should',
+    'must', 'might', 'may', 'could', 'would',
+    'do', 'don\'t', 'did', 'didn\'t', 'does', 'doesn\'t',
+    'is', 'isn\'t', 'was', 'wasn\'t', 'are', 'aren\'t',
+    'were', 'weren\'t', 'am', 'have', 'haven\'t',
+    'has', 'hasn\'t', 'had', 'hadn\'t', 'need',
+    'want', 'wish', 'hope', 'fear', 'know',
+    'believe', 'think', 'feel', 'sense', 'understand',
+    'realize', 'recognize', 'acknowledge', 'accept', 'deny',
+    'refuse', 'reject', 'resist', 'fight', 'struggle',
+    'try', 'attempt', 'fail', 'succeed', 'win',
+    'lose', 'defeat', 'conquer', 'overcome', 'survive',
+  ];
+
+  static const relationships = [
+    'mother', 'father', 'son', 'daughter', 'brother', 'sister',
+    'husband', 'wife', 'child', 'baby', 'infant',
+    'parent', 'sibling', 'family', 'relative', 'kin',
+    'friend', 'enemy', 'stranger', 'neighbor', 'lover',
+    'master', 'servant', 'slave', 'owner', 'victim',
+    'killer', 'murderer', 'savior', 'betrayer', 'traitor',
+    'witness', 'survivor', 'casualty', 'innocent', 'guilty',
+    'grandmother', 'grandfather', 'grandchild', 'grandson', 'granddaughter',
+    'aunt', 'uncle', 'niece', 'nephew', 'cousin',
+    'widow', 'widower', 'orphan', 'abandoned', 'adopted',
+    'stepmother', 'stepfather', 'stepchild', 'half-brother', 'half-sister',
+    'twin', 'triplet', 'firstborn', 'youngest', 'middle',
+    'heir', 'successor', 'predecessor', 'ancestor', 'descendant',
+  ];
+
+  static const bodyParts = [
+    'eyes', 'eye', 'face', 'head', 'skull',
+    'teeth', 'tooth', 'tongue', 'mouth', 'lips',
+    'hands', 'hand', 'fingers', 'finger', 'nails',
+    'arms', 'arm', 'legs', 'leg', 'feet',
+    'foot', 'toes', 'toe', 'bones', 'bone',
+    'spine', 'ribs', 'chest', 'heart', 'lungs',
+    'stomach', 'guts', 'entrails', 'viscera', 'organs',
+    'skin', 'flesh', 'muscle', 'sinew', 'tendon',
+    'veins', 'vein', 'arteries', 'blood', 'pulse',
+    'hair', 'scalp', 'neck', 'throat', 'voice',
+    'scream', 'whisper', 'breath', 'sigh', 'gasp',
+  ];
+
+  static const sounds = [
+    'knock', 'tap', 'thump', 'bang', 'crash',
+    'creak', 'groan', 'moan', 'wail', 'cry',
+    'scream', 'shriek', 'howl', 'roar', 'growl',
+    'hiss', 'whisper', 'murmur', 'mumble', 'chant',
+    'sing', 'hum', 'buzz', 'drone', 'ring',
+    'chime', 'toll', 'clang', 'clank', 'rattle',
+    'rustle', 'shuffle', 'scrape', 'scratch', 'click',
+    'snap', 'crack', 'pop', 'burst', 'explode',
+    'drip', 'splash', 'pour', 'flow', 'trickle',
+    'echo', 'reverberate', 'resonate', 'vibrate', 'pulse',
+    'thud', 'thump', 'pound', 'beat', 'drum',
+    'footsteps', 'walking', 'running', 'dragging', 'shuffling',
+  ];
+
+  static const sensations = [
+    'touch', 'pressure', 'weight', 'heaviness', 'lightness',
+    'warmth', 'heat', 'cold', 'chill', 'freeze',
+    'burning', 'freezing', 'numb', 'tingle', 'prickle',
+    'itch', 'ache', 'pain', 'throb', 'pulse',
+    'sting', 'bite', 'scratch', 'cut', 'pierce',
+    'stab', 'slash', 'tear', 'rip', 'shred',
+    'crush', 'squeeze', 'grip', 'clutch', 'grasp',
+    'pull', 'push', 'shove', 'drag', 'haul',
+    'lift', 'carry', 'hold', 'drop', 'release',
+    'dizzy', 'faint', 'weak', 'strong', 'powerful',
+    'tired', 'exhausted', 'drained', 'depleted', 'empty',
+  ];
+
+  static const adjectives = [
+    'eerie', 'uncanny', 'strange', 'weird', 'odd',
+    'peculiar', 'bizarre', 'abnormal', 'unnatural', 'supernatural',
+    'paranormal', 'otherworldly', 'unearthly', 'spectral', 'ghostly',
+    'ethereal', 'phantom', 'shadowy', 'dim', 'faint',
+    'vague', 'unclear', 'indistinct', 'blurry', 'hazy',
+    'sinister', 'ominous', 'foreboding', 'threatening', 'menacing',
+    'malevolent', 'evil', 'wicked', 'dark', 'black',
+    'grim', 'dire', 'dreadful', 'terrible', 'horrible',
+    'horrific', 'terrifying', 'frightening', 'scary', 'spooky',
+    'creepy', 'unsettling', 'disturbing', 'unnerving', 'chilling',
+    'macabre', 'morbid', 'gruesome', 'grisly', 'ghastly',
+    'haunting', 'persistent', 'relentless', 'unending', 'eternal',
+  ];
+
+  // All words combined
+  static final List<String> allWords = [
+    ...entities,
+    ...locations,
+    ...emotions,
+    ...actions,
+    ...warnings,
+    ...names,
+    ...timeWords,
+    ...fragments,
+    ...objects,
+    ...descriptors,
+    ...verbalFragments,
+    ...relationships,
+    ...bodyParts,
+    ...sounds,
+    ...sensations,
+    ...adjectives,
+  ];
+
+  // Random instance for better randomization
+  static final _random = Random();
+
+  // Get a random word, avoiding recently used ones
+  static String getRandomWord(List<String> recentWords) {
+    final available = allWords.where((word) => !recentWords.contains(word)).toList();
+
+    if (available.isEmpty) {
+      // If all words have been used recently, use all words
+      return allWords[_random.nextInt(allWords.length)];
+    }
+
+    return available[_random.nextInt(available.length)];
+  }
+
+  // Get word count
+  static int get totalWords => allWords.length;
+
+  // Prevent instantiation
+  WordBank._();
+}

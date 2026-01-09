@@ -111,7 +111,7 @@ class AppTheme {
       ),
 
       // Card theme
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         color: AppColors.darkGray,
         elevation: 4,
         margin: EdgeInsets.all(8),
