@@ -67,9 +67,6 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
   }
 
   Future<void> _endSession() async {
-    // Get summary before ending
-    final summary = ref.read(communeProvider.notifier).getSessionSummary();
-    
     final shouldEnd = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -95,10 +92,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
     );
 
     if (shouldEnd == true) {
-      await ref.read(communeProvider.notifier).endSession();
-      if (mounted) {
-        _showSessionSummary(summary);
-      }
+      await ref.read(communeProvider.notifier).endSession(showSummary: true);
     }
   }
 
@@ -201,6 +195,14 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
       final nextLength = next.messages.length;
       if (prevLength != nextLength) {
         _scrollToBottom();
+      }
+      
+      // Show summary when session auto-ends
+      if (next.pendingSummary != null && previous?.pendingSummary == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showSessionSummary(next.pendingSummary!);
+          ref.read(communeProvider.notifier).clearPendingSummary();
+        });
       }
     });
 

@@ -65,6 +65,7 @@ class CommuneState {
   final bool isRecordingSeance;
   final int sessionSecondsRemaining; // Time left in current session
   final DateTime? sessionStartTime;
+  final SessionSummary? pendingSummary; // Summary to show after session ends
 
   const CommuneState({
     this.sessionId,
@@ -79,6 +80,7 @@ class CommuneState {
     this.isRecordingSeance = false,
     this.sessionSecondsRemaining = 300, // 5 minutes
     this.sessionStartTime,
+    this.pendingSummary,
   });
 
   static const int sessionDurationSeconds = 300; // 5 minutes
@@ -109,6 +111,8 @@ class CommuneState {
     bool? isRecordingSeance,
     int? sessionSecondsRemaining,
     DateTime? sessionStartTime,
+    SessionSummary? pendingSummary,
+    bool clearPendingSummary = false,
   }) {
     return CommuneState(
       sessionId: sessionId ?? this.sessionId,
@@ -123,6 +127,7 @@ class CommuneState {
       isRecordingSeance: isRecordingSeance ?? this.isRecordingSeance,
       sessionSecondsRemaining: sessionSecondsRemaining ?? this.sessionSecondsRemaining,
       sessionStartTime: sessionStartTime ?? this.sessionStartTime,
+      pendingSummary: clearPendingSummary ? null : (pendingSummary ?? this.pendingSummary),
     );
   }
 }
@@ -417,6 +422,9 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
     _connectionStrengthTimer?.cancel();
     _sessionTimer?.cancel();
 
+    // Get summary before clearing state
+    final summary = showSummary ? getSessionSummary() : null;
+
     // Increment session count
     final newCount = state.sessionCount + 1;
 
@@ -428,9 +436,14 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
       sessionCount: newCount,
       sessionSecondsRemaining: CommuneState.sessionDurationSeconds,
       sessionStartTime: null,
+      pendingSummary: summary,
     );
 
     await _saveSessionCount();
+  }
+
+  void clearPendingSummary() {
+    state = state.copyWith(clearPendingSummary: true);
   }
 
   void clearError() {
