@@ -11,6 +11,8 @@ class AudioService {
   AudioPlayer? _tickPlayer;
   AudioPlayer? _radioStaticPlayer;
   AudioPlayer? _wordBlipPlayer;
+  AudioPlayer? _communeDronePlayer;
+  AudioPlayer? _whisperPlayer;
 
   Timer? _tickTimer;
   bool _isInitialized = false;
@@ -23,6 +25,8 @@ class AudioService {
     _tickPlayer = AudioPlayer();
     _radioStaticPlayer = AudioPlayer();
     _wordBlipPlayer = AudioPlayer();
+    _communeDronePlayer = AudioPlayer();
+    _whisperPlayer = AudioPlayer();
 
     try {
       await _ambientPlayer!.setAsset('assets/audio/ambient_static.mp3');
@@ -30,10 +34,13 @@ class AudioService {
       await _tickPlayer!.setAsset('assets/audio/geiger_tick.mp3');
       await _radioStaticPlayer!.setAsset('assets/audio/radio_static.mp3');
       await _wordBlipPlayer!.setAsset('assets/audio/word_blip.mp3');
+      await _communeDronePlayer!.setAsset('assets/audio/commune_drone.mp3');
+      await _whisperPlayer!.setAsset('assets/audio/spirit_whisper.mp3');
 
-      // Set ambient and radio static to loop
+      // Set ambient, radio static, and commune drone to loop
       await _ambientPlayer!.setLoopMode(LoopMode.one);
       await _radioStaticPlayer!.setLoopMode(LoopMode.one);
+      await _communeDronePlayer!.setLoopMode(LoopMode.one);
 
       _isInitialized = true;
     } catch (e) {
@@ -155,6 +162,46 @@ class AudioService {
     }
   }
 
+  // Commune audio methods
+  Future<void> playCommuneDrone({double volume = 0.2}) async {
+    if (!_isInitialized) await initialize();
+
+    try {
+      await _communeDronePlayer?.setVolume(volume);
+      await _communeDronePlayer?.play();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
+  Future<void> stopCommuneDrone() async {
+    try {
+      await _communeDronePlayer?.stop();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
+  Future<void> setCommuneDroneVolume(double volume) async {
+    try {
+      await _communeDronePlayer?.setVolume(volume);
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
+  Future<void> playWhisper() async {
+    if (!_isInitialized) await initialize();
+
+    try {
+      await _whisperPlayer?.seek(Duration.zero);
+      await _whisperPlayer?.setVolume(0.4);
+      await _whisperPlayer?.play();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
   Future<void> dispose() async {
     _tickTimer?.cancel();
     await _ambientPlayer?.dispose();
@@ -162,12 +209,16 @@ class AudioService {
     await _tickPlayer?.dispose();
     await _radioStaticPlayer?.dispose();
     await _wordBlipPlayer?.dispose();
+    await _communeDronePlayer?.dispose();
+    await _whisperPlayer?.dispose();
 
     _ambientPlayer = null;
     _effectPlayer = null;
     _tickPlayer = null;
     _radioStaticPlayer = null;
     _wordBlipPlayer = null;
+    _communeDronePlayer = null;
+    _whisperPlayer = null;
     _isInitialized = false;
   }
 }
