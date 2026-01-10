@@ -1,11 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/providers/premium_provider.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final premiumState = ref.watch(premiumProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('SETTINGS'),
@@ -13,6 +19,76 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 16),
+
+          // Subscription section
+          _buildSettingsSection(
+            context,
+            'Subscription',
+            [
+              _buildSettingsTile(
+                context,
+                icon: premiumState.isPremium
+                    ? Icons.workspace_premium
+                    : Icons.lock,
+                title: premiumState.isPremium
+                    ? 'Premium Active'
+                    : 'Upgrade to Premium',
+                subtitle: premiumState.isPremium
+                    ? 'Unlimited sessions and séances'
+                    : 'Unlock all features',
+                onTap: () => context.push('/paywall'),
+                trailing: premiumState.isPremium
+                    ? const Icon(Icons.check_circle,
+                        color: AppColors.spectralGreen)
+                    : null,
+              ),
+              if (premiumState.isPremium)
+                _buildSettingsTile(
+                  context,
+                  icon: Icons.restore,
+                  title: 'Restore Purchases',
+                  subtitle: 'Sync your subscription',
+                  onTap: () async {
+                    final success = await ref
+                        .read(premiumProvider.notifier)
+                        .restorePurchases();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            success
+                                ? 'Purchases restored!'
+                                : 'No purchases found',
+                          ),
+                          backgroundColor: success
+                              ? AppColors.spectralGreen
+                              : AppColors.zoneModerate,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              // Debug mode toggle (web only)
+              if (kIsWeb)
+                _buildSettingsTile(
+                  context,
+                  icon: Icons.bug_report,
+                  title: 'Debug Premium Mode',
+                  subtitle: premiumState.debugModeEnabled
+                      ? 'Enabled (for testing)'
+                      : 'Disabled',
+                  onTap: () =>
+                      ref.read(premiumProvider.notifier).toggleDebugMode(),
+                  trailing: Switch(
+                    value: premiumState.debugModeEnabled,
+                    onChanged: (_) =>
+                        ref.read(premiumProvider.notifier).toggleDebugMode(),
+                    activeColor: AppColors.spectralGreen,
+                  ),
+                ),
+            ],
+          ),
+
           _buildSettingsSection(
             context,
             'Detection',
@@ -74,7 +150,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 icon: Icons.info,
                 title: 'Version',
-                subtitle: '1.0.0 - Sprint 1',
+                subtitle: '1.0.0 - Sprint 5',
                 onTap: () {},
               ),
             ],
@@ -113,7 +189,8 @@ class SettingsScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     required String subtitle,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
+    Widget? trailing,
   }) {
     return ListTile(
       leading: Icon(
@@ -130,10 +207,11 @@ class SettingsScreen extends StatelessWidget {
               color: AppColors.lightGray,
             ),
       ),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: AppColors.lightGray,
-      ),
+      trailing: trailing ??
+          Icon(
+            Icons.chevron_right,
+            color: AppColors.lightGray,
+          ),
       onTap: onTap,
     );
   }

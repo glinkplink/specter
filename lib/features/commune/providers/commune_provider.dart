@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/config/supabase_config.dart';
+import '../../../core/providers/premium_provider.dart';
 
 enum MessageRole { user, spirit }
 
@@ -133,10 +134,18 @@ class CommuneState {
 }
 
 class CommuneNotifier extends StateNotifier<CommuneState> {
-  CommuneNotifier() : super(const CommuneState()) {
+  CommuneNotifier(this.ref) : super(const CommuneState()) {
     _loadSessionCount();
+
+    // Listen to premium status changes
+    ref.listen<PremiumState>(premiumProvider, (previous, next) {
+      if (previous?.isPremium != next.isPremium) {
+        state = state.copyWith(isPremium: next.isPremium);
+      }
+    });
   }
 
+  final Ref ref;
   Timer? _connectionStrengthTimer;
   Timer? _sessionTimer;
   final List<int> _usedFallbackIndices = [];
@@ -459,5 +468,5 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
 }
 
 final communeProvider = StateNotifierProvider<CommuneNotifier, CommuneState>((ref) {
-  return CommuneNotifier();
+  return CommuneNotifier(ref);
 });

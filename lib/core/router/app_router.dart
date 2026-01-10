@@ -4,6 +4,7 @@ import '../../features/scan/scan_screen.dart';
 import '../../features/spirit_box/spirit_box_screen.dart';
 import '../../features/commune/commune_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/paywall/paywall_screen.dart';
 import '../../shared/widgets/navigation_shell.dart';
 
 final appRouter = GoRouter(
@@ -45,6 +46,11 @@ final appRouter = GoRouter(
           ),
         ),
       ],
+    ),
+    // Paywall route (outside ShellRoute to hide bottom navigation)
+    GoRoute(
+      path: '/paywall',
+      builder: (context, state) => const PaywallScreen(),
     ),
   ],
 );

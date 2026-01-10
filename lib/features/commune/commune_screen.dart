@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/services/audio_service.dart';
 import 'providers/commune_provider.dart';
@@ -153,10 +154,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                // TODO: Show paywall
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Premium upgrade coming soon!')),
-                );
+                context.push('/paywall');
               },
               child: Text(
                 'Upgrade',
@@ -415,14 +413,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // TODO: Show paywall
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Premium upgrade coming soon!'),
-                    ),
-                  );
-                },
+                onPressed: () => context.push('/paywall'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.spectralGreen,
                   foregroundColor: AppColors.deepBlack,
@@ -593,9 +584,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                                 content: const Text('Séance mode requires premium'),
                                 action: SnackBarAction(
                                   label: 'Upgrade',
-                                  onPressed: () {
-                                    // TODO: Show paywall
-                                  },
+                                  onPressed: () => context.push('/paywall'),
                                 ),
                               ),
                             );
