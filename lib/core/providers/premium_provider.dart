@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/revenuecat_service.dart';
-import '../config/revenuecat_config.dart';
 
 /// Premium subscription state
 class PremiumState {
@@ -72,7 +71,7 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
           isPremium: debugMode,
         );
         if (kDebugMode) {
-          print('PremiumProvider: Web platform - debug mode: $debugMode');
+          debugPrint('PremiumProvider: Web platform - debug mode: $debugMode');
         }
         return;
       }
@@ -97,17 +96,17 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
       );
 
       if (kDebugMode) {
-        print('PremiumProvider: Initialized - isPremium: $isPremium');
+        debugPrint('PremiumProvider: Initialized - isPremium: $isPremium');
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('PremiumProvider: Initialization error - $e');
-      }
       state = state.copyWith(
         isLoading: false,
-        isInitialized: true,
         error: 'Failed to initialize premium features',
       );
+
+      if (kDebugMode) {
+        debugPrint('PremiumProvider: Initialization error - $e');
+      }
     }
   }
 
@@ -130,7 +129,10 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
     } on PlatformException catch (e) {
       // Handle specific error codes
       final errorCode = PurchasesErrorHelper.getErrorCode(e);
-
+      if (kDebugMode) {
+        debugPrint(
+            'PremiumProvider: Purchase error - $errorCode: ${e.message}');
+      }
       String? errorMessage;
       if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
         // User cancelled - don't show error
@@ -148,20 +150,16 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
         error: errorMessage,
       );
 
-      if (kDebugMode) {
-        print('PremiumProvider: Purchase error - $errorCode: ${e.message}');
-      }
-
       return false;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('PremiumProvider: Purchase unexpected error - $e');
+      }
+
       state = state.copyWith(
         isLoading: false,
-        error: 'Unexpected error: $e',
+        error: 'Purchase failed. Please try again.',
       );
-
-      if (kDebugMode) {
-        print('PremiumProvider: Purchase unexpected error - $e');
-      }
 
       return false;
     }
@@ -183,14 +181,14 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
 
       return isPremium;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('PremiumProvider: Restore error - $e');
+      }
+
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to restore purchases',
       );
-
-      if (kDebugMode) {
-        print('PremiumProvider: Restore error - $e');
-      }
 
       return false;
     }
@@ -224,7 +222,7 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
     );
 
     if (kDebugMode) {
-      print('PremiumProvider: Debug mode toggled - $newDebugMode');
+      debugPrint('PremiumProvider: Debug mode toggled - $newDebugMode');
     }
   }
 
@@ -241,7 +239,7 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
       return prefs.getBool('premium_debug_mode') ?? false;
     } catch (e) {
       if (kDebugMode) {
-        print('PremiumProvider: Failed to get debug mode - $e');
+        debugPrint('PremiumProvider: Failed to get debug mode - $e');
       }
       return false;
     }
@@ -253,14 +251,9 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
       await prefs.setBool('premium_debug_mode', enabled);
     } catch (e) {
       if (kDebugMode) {
-        print('PremiumProvider: Failed to save debug mode - $e');
+        debugPrint('PremiumProvider: Failed to save debug mode - $e');
       }
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
 

@@ -9,14 +9,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:specter/main.dart';
 
 void main() {
-  testWidgets('App launches and displays home screen', (WidgetTester tester) async {
+  testWidgets('App launches and displays home screen',
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const SpecterApp());
 
-    // Wait for the app to settle
-    await tester.pumpAndSettle();
+    // Avoid pumpAndSettle: the app has repeating animations.
+    await tester.pump(const Duration(milliseconds: 200));
 
-    // Verify that the home screen displays the welcome text
-    expect(find.text('Welcome, Ghost Hunter'), findsOneWidget);
+    expect(find.text('SPECTER'), findsOneWidget);
   });
 }

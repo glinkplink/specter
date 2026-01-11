@@ -16,7 +16,8 @@ class SignalBars extends StatefulWidget {
   State<SignalBars> createState() => _SignalBarsState();
 }
 
-class _SignalBarsState extends State<SignalBars> with SingleTickerProviderStateMixin {
+class _SignalBarsState extends State<SignalBars>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final _random = Random();
 
@@ -76,7 +77,7 @@ class _SignalBarsState extends State<SignalBars> with SingleTickerProviderStateM
         width: 4,
         height: 10,
         decoration: BoxDecoration(
-          color: AppColors.shadeMist.withOpacity(0.3),
+          color: AppColors.shadeMist.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(2),
         ),
       );
@@ -90,7 +91,7 @@ class _SignalBarsState extends State<SignalBars> with SingleTickerProviderStateM
     // Color based on intensity - use dusty rose for high intensity
     final color = widget.intensity > 0.6
         ? AppColors.dustyRose
-        : AppColors.amethystGlow.withOpacity(0.6);
+        : AppColors.amethystGlow.withValues(alpha: 0.6);
 
     return Container(
       width: 4,
@@ -101,7 +102,7 @@ class _SignalBarsState extends State<SignalBars> with SingleTickerProviderStateM
         boxShadow: widget.intensity > 0.6
             ? [
                 BoxShadow(
-                  color: AppColors.dustyRose.withOpacity(0.5),
+                  color: AppColors.dustyRose.withValues(alpha: 0.5),
                   blurRadius: 4,
                   spreadRadius: 1,
                 ),

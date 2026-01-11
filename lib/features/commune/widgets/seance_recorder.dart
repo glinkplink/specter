@@ -71,7 +71,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
         color: AppColors.darkPlum,
         border: Border(
           top: BorderSide(
-            color: AppColors.amethystGlow.withOpacity(0.5),
+            color: AppColors.amethystGlow.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -135,7 +135,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                   width: 4,
                   height: 60 * height,
                   decoration: BoxDecoration(
-                    color: AppColors.dustyRose.withOpacity(0.8),
+                    color: AppColors.dustyRose.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 );
@@ -149,7 +149,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
           Text(
             'Listening to the silence...',
             style: TextStyle(
-              color: AppColors.lavenderWhite.withOpacity(0.8),
+              color: AppColors.lavenderWhite.withValues(alpha: 0.8),
               fontSize: 14,
               fontStyle: FontStyle.italic,
             ),
@@ -160,7 +160,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
           Text(
             'The spirits find meaning in the static',
             style: TextStyle(
-              color: AppColors.amethystGlow.withOpacity(0.7),
+              color: AppColors.amethystGlow.withValues(alpha: 0.7),
               fontSize: 12,
             ),
           ),
@@ -178,7 +178,8 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                 child: CircularProgressIndicator(
                   value: 1 - (_remainingSeconds / _recordDuration),
                   strokeWidth: 4,
-                  backgroundColor: AppColors.twilightCard.withOpacity(0.4),
+                  backgroundColor:
+                      AppColors.twilightCard.withValues(alpha: 0.4),
                   valueColor: AlwaysStoppedAnimation(AppColors.amethystGlow),
                 ),
               ),

@@ -53,7 +53,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
   String _formatTime(int totalSeconds) {
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
-    return '${minutes}:${seconds.toString().padLeft(2, '0')}';
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   Future<void> _sendMessage() async {
@@ -104,10 +104,10 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.darkGray,
+        backgroundColor: AppColors.darkPlum,
         title: Row(
           children: [
-            Icon(Icons.auto_awesome, color: AppColors.ghostlyPurple),
+            Icon(Icons.auto_awesome, color: AppColors.plumVeil),
             const SizedBox(width: 8),
             const Text('Session Complete'),
           ],
@@ -124,14 +124,16 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.ghostlyPurple.withOpacity(0.2),
+                  color: AppColors.plumVeil.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
                     Icon(
-                      summary.remainingSessions > 0 ? Icons.hourglass_bottom : Icons.lock,
-                      color: AppColors.ghostlyPurple,
+                      summary.remainingSessions > 0
+                          ? Icons.hourglass_bottom
+                          : Icons.lock,
+                      color: AppColors.plumVeil,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -141,7 +143,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                             ? '${summary.remainingSessions} session${summary.remainingSessions == 1 ? '' : 's'} remaining'
                             : 'The spirits have more to say...\nUpgrade to continue',
                         style: TextStyle(
-                          color: AppColors.boneWhite.withOpacity(0.9),
+                          color: AppColors.lavenderWhite.withValues(alpha: 0.9),
                           fontSize: 13,
                         ),
                       ),
@@ -160,7 +162,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               },
               child: Text(
                 'Upgrade',
-                style: TextStyle(color: AppColors.spectralGreen),
+                style: TextStyle(color: AppColors.amethystGlow),
               ),
             ),
           TextButton(
@@ -178,8 +180,12 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: AppColors.boneWhite.withOpacity(0.7))),
-          Text(value, style: TextStyle(color: AppColors.boneWhite, fontWeight: FontWeight.bold)),
+          Text(label,
+              style: TextStyle(
+                  color: AppColors.lavenderWhite.withValues(alpha: 0.7))),
+          Text(value,
+              style: TextStyle(
+                  color: AppColors.lavenderWhite, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -195,7 +201,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
       final nextLength = next.messages.length;
       if (prevLength != nextLength) {
         _scrollToBottom();
-        
+
         // Detect new spirit messages and trigger haptic
         if (nextLength > prevLength) {
           final lastMessage = next.messages.last;
@@ -204,7 +210,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
           }
         }
       }
-      
+
       // Show summary when session auto-ends
       if (next.pendingSummary != null && previous?.pendingSummary == null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -236,9 +242,9 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.deepBlack,
-                  AppColors.darkGray.withOpacity(0.3),
-                  AppColors.deepBlack,
+                  AppColors.deepVoid,
+                  AppColors.darkPlum.withValues(alpha: 0.3),
+                  AppColors.deepVoid,
                 ],
               ),
             ),
@@ -263,7 +269,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.zoneActive.withOpacity(0.9),
+                    color: AppColors.zoneActive.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -294,8 +300,8 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.amethystGlow.withOpacity(0.4),
-                    AppColors.plumVeil.withOpacity(0.1),
+                    AppColors.amethystGlow.withValues(alpha: 0.4),
+                    AppColors.plumVeil.withValues(alpha: 0.1),
                     Colors.transparent,
                   ],
                 ),
@@ -306,8 +312,12 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 color: AppColors.amethystGlow,
               ),
             )
-                .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .scale(begin: const Offset(0.95, 0.95), end: const Offset(1.05, 1.05), duration: 2.seconds),
+                .animate(
+                    onPlay: (controller) => controller.repeat(reverse: true))
+                .scale(
+                    begin: const Offset(0.95, 0.95),
+                    end: const Offset(1.05, 1.05),
+                    duration: 2.seconds),
 
             const SizedBox(height: 32),
 
@@ -325,7 +335,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
             Text(
               'Speak across the threshold. Ask what weighs on your heart, and listen for those who answer.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.mutedLavender.withOpacity(0.9),
+                    color: AppColors.mutedLavender.withValues(alpha: 0.9),
                   ),
               textAlign: TextAlign.center,
             ),
@@ -335,12 +345,13 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
             // Session info
             if (!communeState.isPremium) ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.twilightCard.withOpacity(0.6),
+                  color: AppColors.twilightCard.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppColors.amethystGlow.withOpacity(0.2),
+                    color: AppColors.amethystGlow.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Text(
@@ -364,7 +375,8 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.amethystGlow,
                   foregroundColor: AppColors.lavenderWhite,
-                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -388,13 +400,13 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.amethystGlow.withOpacity(0.15),
-                      AppColors.plumVeil.withOpacity(0.05),
+                      AppColors.amethystGlow.withValues(alpha: 0.15),
+                      AppColors.plumVeil.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.amethystGlow.withOpacity(0.3),
+                    color: AppColors.amethystGlow.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -420,7 +432,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                     Text(
                       'Words left unspoken. Answers yet to come.\nThe spirits await your return.',
                       style: TextStyle(
-                        color: AppColors.mutedLavender.withOpacity(0.8),
+                        color: AppColors.mutedLavender.withValues(alpha: 0.8),
                         fontSize: 13,
                       ),
                       textAlign: TextAlign.center,
@@ -433,7 +445,8 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.mysticGold,
                   foregroundColor: AppColors.deepVoid,
-                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -466,13 +479,14 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               Icon(
                 Icons.sensors,
                 size: 16,
-                color: AppColors.amethystGlow.withOpacity(communeState.connectionStrength),
+                color: AppColors.amethystGlow
+                    .withValues(alpha: communeState.connectionStrength),
               ),
               const SizedBox(width: 8),
               Text(
                 'The Veil: ${(communeState.connectionStrength * 100).toInt()}%',
                 style: TextStyle(
-                  color: AppColors.mutedLavender.withOpacity(0.8),
+                  color: AppColors.mutedLavender.withValues(alpha: 0.8),
                   fontSize: 12,
                 ),
               ),
@@ -482,7 +496,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 size: 14,
                 color: communeState.sessionSecondsRemaining < 60
                     ? AppColors.dustyRose
-                    : AppColors.mutedLavender.withOpacity(0.5),
+                    : AppColors.mutedLavender.withValues(alpha: 0.5),
               ),
               const SizedBox(width: 4),
               Text(
@@ -490,10 +504,10 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 style: TextStyle(
                   color: communeState.sessionSecondsRemaining < 60
                       ? AppColors.dustyRose
-                      : AppColors.mutedLavender.withOpacity(0.8),
+                      : AppColors.mutedLavender.withValues(alpha: 0.8),
                   fontSize: 12,
-                  fontWeight: communeState.sessionSecondsRemaining < 60 
-                      ? FontWeight.bold 
+                  fontWeight: communeState.sessionSecondsRemaining < 60
+                      ? FontWeight.bold
                       : FontWeight.normal,
                 ),
               ),
@@ -508,7 +522,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                   child: Text(
                     'Speak... they are listening...',
                     style: TextStyle(
-                      color: AppColors.mutedLavender.withOpacity(0.6),
+                      color: AppColors.mutedLavender.withValues(alpha: 0.6),
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -578,7 +592,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               color: AppColors.darkPlum,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.deepVoid.withOpacity(0.7),
+                  color: AppColors.deepVoid.withValues(alpha: 0.7),
                   blurRadius: 12,
                   offset: const Offset(0, -5),
                 ),
@@ -591,9 +605,12 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                   onPressed: communeState.isConnecting
                       ? null
                       : () {
-                          final canUse = ref.read(communeProvider.notifier).canUseSeance();
+                          final canUse =
+                              ref.read(communeProvider.notifier).canUseSeance();
                           if (canUse) {
-                            ref.read(communeProvider.notifier).setRecordingSeance(true);
+                            ref
+                                .read(communeProvider.notifier)
+                                .setRecordingSeance(true);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -628,8 +645,8 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                         ),
                     ],
                   ),
-                  tooltip: communeState.hasSeancesRemaining 
-                      ? 'Séance' 
+                  tooltip: communeState.hasSeancesRemaining
+                      ? 'Séance'
                       : 'Séance (Premium)',
                 ),
                 const SizedBox(width: 8),

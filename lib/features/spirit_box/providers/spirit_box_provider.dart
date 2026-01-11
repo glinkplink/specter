@@ -90,17 +90,20 @@ class SpiritBoxNotifier extends StateNotifier<SpiritBoxState> {
   }
 
   void _startFrequencySweep() {
-    _frequencySweepTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+    _frequencySweepTimer =
+        Timer.periodic(const Duration(milliseconds: 100), (_) {
       if (!state.isScanning) return;
 
       double newFreq;
 
       // 3% chance to jump to a random frequency (rare scanning jump)
       if (_random.nextDouble() < 0.03) {
-        newFreq = 88.0 + (_random.nextDouble() * 20.0); // Random freq in 88-108 range
+        newFreq =
+            88.0 + (_random.nextDouble() * 20.0); // Random freq in 88-108 range
       } else {
         // Smooth sweep with momentum - moderate speed
-        final sweepSpeed = 0.2 + (_random.nextDouble() * 0.3); // 0.2 to 0.5 MHz per update
+        final sweepSpeed =
+            0.2 + (_random.nextDouble() * 0.3); // 0.2 to 0.5 MHz per update
         newFreq = state.currentFrequency + (_sweepDirection * sweepSpeed);
 
         // Reverse direction at boundaries
@@ -202,6 +205,7 @@ class SpiritBoxNotifier extends StateNotifier<SpiritBoxState> {
   }
 }
 
-final spiritBoxProvider = StateNotifierProvider<SpiritBoxNotifier, SpiritBoxState>((ref) {
+final spiritBoxProvider =
+    StateNotifierProvider<SpiritBoxNotifier, SpiritBoxState>((ref) {
   return SpiritBoxNotifier();
 });

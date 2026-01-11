@@ -16,7 +16,8 @@ class EMFGauge extends StatefulWidget {
   State<EMFGauge> createState() => _EMFGaugeState();
 }
 
-class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin {
+class _EMFGaugeState extends State<EMFGauge>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   double _currentLevel = 0;
@@ -74,7 +75,8 @@ class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: _getZoneColor(_animation.value).withOpacity(0.3),
+                      color: _getZoneColor(_animation.value)
+                          .withValues(alpha: 0.3),
                       blurRadius: 40 + (_animation.value * 0.3),
                       spreadRadius: 10,
                     ),
@@ -91,7 +93,7 @@ class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.dustyRose.withOpacity(0.6),
+                      color: AppColors.dustyRose.withValues(alpha: 0.6),
                       blurRadius: 60,
                       spreadRadius: 20,
                     ),
@@ -114,12 +116,14 @@ class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin
               children: [
                 const SizedBox(height: 180),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.deepVoid.withOpacity(0.9),
+                    color: AppColors.deepVoid.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: _getZoneColor(_animation.value).withOpacity(0.5),
+                      color: _getZoneColor(_animation.value)
+                          .withValues(alpha: 0.5),
                       width: 2,
                     ),
                   ),
@@ -197,18 +201,21 @@ class EMFGaugePainter extends CustomPainter {
     _drawNeedle(canvas, center, radius);
   }
 
-  void _drawZoneArc(Canvas canvas, Offset center, double radius, double startLevel, double endLevel, Color color) {
+  void _drawZoneArc(Canvas canvas, Offset center, double radius,
+      double startLevel, double endLevel, Color color) {
     const startAngle = -225.0; // -135 degrees (bottom left)
     const sweepAngle = 270.0; // Total sweep of gauge
 
     final normalizedStart = startLevel / 100;
     final normalizedEnd = endLevel / 100;
 
-    final arcStartAngle = (startAngle + (sweepAngle * normalizedStart)) * pi / 180;
-    final arcSweepAngle = (sweepAngle * (normalizedEnd - normalizedStart)) * pi / 180;
+    final arcStartAngle =
+        (startAngle + (sweepAngle * normalizedStart)) * pi / 180;
+    final arcSweepAngle =
+        (sweepAngle * (normalizedEnd - normalizedStart)) * pi / 180;
 
     final arcPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
 
@@ -227,11 +234,12 @@ class EMFGaugePainter extends CustomPainter {
     const tickCount = 11;
 
     final tickPaint = Paint()
-      ..color = AppColors.mutedLavender.withOpacity(0.5)
+      ..color = AppColors.mutedLavender.withValues(alpha: 0.5)
       ..strokeWidth = 2;
 
     for (int i = 0; i < tickCount; i++) {
-      final angle = (startAngle + (sweepAngle * i / (tickCount - 1))) * pi / 180;
+      final angle =
+          (startAngle + (sweepAngle * i / (tickCount - 1))) * pi / 180;
       final startX = center.dx + (radius - 25) * cos(angle);
       final startY = center.dy + (radius - 25) * sin(angle);
       final endX = center.dx + (radius - 15) * cos(angle);
@@ -246,7 +254,8 @@ class EMFGaugePainter extends CustomPainter {
     const sweepAngle = 270.0;
 
     final normalizedLevel = (level / 100).clamp(0.0, 1.0);
-    final needleAngle = (startAngle + (sweepAngle * normalizedLevel)) * pi / 180;
+    final needleAngle =
+        (startAngle + (sweepAngle * normalizedLevel)) * pi / 180;
 
     // Needle color based on spike
     final needleColor = isSpike ? AppColors.dustyRose : AppColors.lavenderWhite;
@@ -254,7 +263,7 @@ class EMFGaugePainter extends CustomPainter {
     // Draw needle shadow for spike effect
     if (isSpike) {
       final shadowPaint = Paint()
-        ..color = AppColors.dustyRose.withOpacity(0.5)
+        ..color = AppColors.dustyRose.withValues(alpha: 0.5)
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round;
 

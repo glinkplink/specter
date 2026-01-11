@@ -78,7 +78,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             const Text(
               'Unable to load subscription options',
               style: TextStyle(
-                color: AppColors.boneWhite,
+                color: AppColors.lavenderWhite,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -88,7 +88,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             Text(
               'Please check your connection and try again',
               style: TextStyle(
-                color: AppColors.boneWhite.withOpacity(0.7),
+                color: AppColors.lavenderWhite.withValues(alpha: 0.7),
                 fontSize: 14,
               ),
               textAlign: TextAlign.center,
@@ -97,8 +97,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             ElevatedButton(
               onPressed: () => context.pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.spectralGreen,
-                foregroundColor: AppColors.deepBlack,
+                backgroundColor: AppColors.amethystGlow,
+                foregroundColor: AppColors.deepVoid,
               ),
               child: const Text('Go Back'),
             ),
@@ -158,7 +158,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               Text(
                 'Commune without limits. The spirits await.',
                 style: TextStyle(
-                  color: AppColors.mutedLavender.withOpacity(0.9),
+                  color: AppColors.mutedLavender.withValues(alpha: 0.9),
                   fontSize: 16,
                 ),
                 textAlign: TextAlign.center,
@@ -185,7 +185,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   option: option,
                   isSelected:
                       _selectedPackage?.identifier == option.package.identifier,
-                  onTap: () => setState(() => _selectedPackage = option.package),
+                  onTap: () =>
+                      setState(() => _selectedPackage = option.package),
                 ),
               ),
 
@@ -209,8 +210,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.deepVoid),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.deepVoid),
                         ),
                       )
                     : const Text(
@@ -242,7 +243,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               Text(
                 'Subscription auto-renews unless cancelled. Terms and privacy policy apply.',
                 style: TextStyle(
-                  color: AppColors.dimLavender.withOpacity(0.7),
+                  color: AppColors.dimLavender.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
                 textAlign: TextAlign.center,

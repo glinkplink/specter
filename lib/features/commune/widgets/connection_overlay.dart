@@ -39,15 +39,14 @@ class ConnectionOverlay extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          AppColors.amethystGlow.withOpacity(strength * 0.8),
-                          AppColors.plumVeil.withOpacity(strength * 0.3),
+                          AppColors.amethystGlow
+                              .withValues(alpha: strength * 0.8),
+                          AppColors.plumVeil.withValues(alpha: strength * 0.3),
                           Colors.transparent,
                         ],
                       ),
                     ),
-                  )
-                      .animate(onPlay: (c) => c.repeat(reverse: true))
-                      .scale(
+                  ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
                         begin: const Offset(0.8, 0.8),
                         end: const Offset(1.2, 1.2),
                         duration: 1.5.seconds,
@@ -86,7 +85,7 @@ class ConnectionOverlay extends StatelessWidget {
                       Text(
                         'Connection',
                         style: TextStyle(
-                          color: AppColors.mutedLavender.withOpacity(0.6),
+                          color: AppColors.mutedLavender.withValues(alpha: 0.6),
                           fontSize: 12,
                         ),
                       ),
@@ -105,9 +104,10 @@ class ConnectionOverlay extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: strength,
-                      backgroundColor: AppColors.twilightCard.withOpacity(0.4),
+                      backgroundColor:
+                          AppColors.twilightCard.withValues(alpha: 0.4),
                       valueColor: AlwaysStoppedAnimation(
-                        AppColors.amethystGlow.withOpacity(0.8),
+                        AppColors.amethystGlow.withValues(alpha: 0.8),
                       ),
                       minHeight: 6,
                     ),
@@ -122,14 +122,12 @@ class ConnectionOverlay extends StatelessWidget {
             Text(
               _getConnectionMessage(strength),
               style: TextStyle(
-                color: AppColors.mutedLavender.withOpacity(0.7),
+                color: AppColors.mutedLavender.withValues(alpha: 0.7),
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
-            )
-                .animate()
-                .fadeIn(duration: 500.ms),
+            ).animate().fadeIn(duration: 500.ms),
           ],
         ),
       ),
@@ -143,7 +141,7 @@ class ConnectionOverlay extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppColors.amethystGlow.withOpacity(opacity * strength),
+          color: AppColors.amethystGlow.withValues(alpha: opacity * strength),
           width: 2,
         ),
       ),

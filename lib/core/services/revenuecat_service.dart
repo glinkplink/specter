@@ -82,8 +82,8 @@ class RevenueCatService {
 
     try {
       final customerInfo = await Purchases.getCustomerInfo();
-      final isPremium = customerInfo
-              .entitlements.all[RevenueCatConfig.premiumEntitlementId]?.isActive ??
+      final isPremium = customerInfo.entitlements
+              .all[RevenueCatConfig.premiumEntitlementId]?.isActive ??
           false;
 
       // Cache the status
@@ -112,7 +112,8 @@ class RevenueCatService {
     try {
       final offerings = await Purchases.getOfferings();
       if (kDebugMode) {
-        print('RevenueCat: Fetched offerings - ${offerings.current?.availablePackages.length ?? 0} packages');
+        print(
+            'RevenueCat: Fetched offerings - ${offerings.current?.availablePackages.length ?? 0} packages');
       }
       return offerings;
     } catch (e) {
@@ -138,8 +139,8 @@ class RevenueCatService {
       }
 
       final customerInfo = await Purchases.purchasePackage(package);
-      final isPremium = customerInfo
-              .entitlements.all[RevenueCatConfig.premiumEntitlementId]?.isActive ??
+      final isPremium = customerInfo.entitlements
+              .all[RevenueCatConfig.premiumEntitlementId]?.isActive ??
           false;
 
       await _cachePremiumStatus(isPremium);
@@ -172,8 +173,8 @@ class RevenueCatService {
       }
 
       final customerInfo = await Purchases.restorePurchases();
-      final isPremium = customerInfo
-              .entitlements.all[RevenueCatConfig.premiumEntitlementId]?.isActive ??
+      final isPremium = customerInfo.entitlements
+              .all[RevenueCatConfig.premiumEntitlementId]?.isActive ??
           false;
 
       await _cachePremiumStatus(isPremium);

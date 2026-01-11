@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 import '../../../core/services/haptic_service.dart';
+import 'sensors_facade.dart';
 
 class EMFReading {
   final double currentLevel;
@@ -48,7 +48,7 @@ class SensorNotifier extends StateNotifier<EMFReading> {
   double _mockBaseLevel = 15.0;
   double _mockDriftDirection = 1.0;
   final _random = Random();
-  
+
   // Haptic service
   final _hapticService = HapticService();
 
@@ -170,8 +170,10 @@ class SensorNotifier extends StateNotifier<EMFReading> {
       _accelerometerBaseline.add(accMagnitude);
 
       if (_magnetometerBaseline.length >= _baselineSamples) {
-        _baselineMag = _magnetometerBaseline.reduce((a, b) => a + b) / _magnetometerBaseline.length;
-        _baselineAcc = _accelerometerBaseline.reduce((a, b) => a + b) / _accelerometerBaseline.length;
+        _baselineMag = _magnetometerBaseline.reduce((a, b) => a + b) /
+            _magnetometerBaseline.length;
+        _baselineAcc = _accelerometerBaseline.reduce((a, b) => a + b) /
+            _accelerometerBaseline.length;
         _isCalibrated = true;
       } else {
         // During calibration, show low activity

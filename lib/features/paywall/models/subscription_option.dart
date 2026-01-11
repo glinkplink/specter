@@ -23,7 +23,7 @@ class SubscriptionOption {
   /// Create subscription option from RevenueCat package
   factory SubscriptionOption.fromPackage(Package package) {
     final product = package.storeProduct;
-    
+
     // Check if annual by looking at the package type or identifier
     final isAnnual = package.packageType == PackageType.annual ||
         package.identifier.toLowerCase().contains('annual') ||

@@ -49,6 +49,7 @@ class HapticNotifier extends StateNotifier<HapticState> {
   }
 }
 
-final hapticProvider = StateNotifierProvider<HapticNotifier, HapticState>((ref) {
+final hapticProvider =
+    StateNotifierProvider<HapticNotifier, HapticState>((ref) {
   return HapticNotifier();
 });

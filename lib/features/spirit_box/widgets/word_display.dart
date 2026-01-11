@@ -26,18 +26,18 @@ class WordDisplay extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
             decoration: BoxDecoration(
-              color: AppColors.deepVoid.withOpacity(0.7),
+              color: AppColors.deepVoid.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: currentWord != null
-                    ? AppColors.amethystGlow.withOpacity(0.5)
-                    : AppColors.shadeMist.withOpacity(0.3),
+                    ? AppColors.amethystGlow.withValues(alpha: 0.5)
+                    : AppColors.shadeMist.withValues(alpha: 0.3),
                 width: 2,
               ),
               boxShadow: currentWord != null
                   ? [
                       BoxShadow(
-                        color: AppColors.amethystGlow.withOpacity(0.3),
+                        color: AppColors.amethystGlow.withValues(alpha: 0.3),
                         blurRadius: 24,
                         spreadRadius: 5,
                       ),
@@ -65,7 +65,7 @@ class WordDisplay extends StatelessWidget {
         style: TextStyle(
           fontSize: 48,
           fontWeight: FontWeight.bold,
-          color: AppColors.dimLavender.withOpacity(0.4),
+          color: AppColors.dimLavender.withValues(alpha: 0.4),
           letterSpacing: 4,
         ),
       );
@@ -88,7 +88,7 @@ class WordDisplay extends StatelessWidget {
         .then()
         .shimmer(
           duration: 400.ms,
-          color: AppColors.dustyRose.withOpacity(0.5),
+          color: AppColors.dustyRose.withValues(alpha: 0.5),
         );
   }
 
@@ -102,7 +102,7 @@ class WordDisplay extends StatelessWidget {
           'ECHOES',
           style: TextStyle(
             fontSize: 10,
-            color: AppColors.mutedLavender.withOpacity(0.5),
+            color: AppColors.mutedLavender.withValues(alpha: 0.5),
             letterSpacing: 2,
             fontWeight: FontWeight.bold,
           ),
@@ -120,12 +120,11 @@ class WordDisplay extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20 - (index * 3),
-                color: AppColors.amethystGlow.withOpacity(opacity.clamp(0.1, 1.0)),
+                color: AppColors.amethystGlow
+                    .withValues(alpha: opacity.clamp(0.1, 1.0)),
                 letterSpacing: 1,
               ),
-            )
-                .animate()
-                .fadeIn(duration: 200.ms),
+            ).animate().fadeIn(duration: 200.ms),
           );
         }),
       ],

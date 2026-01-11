@@ -10,7 +10,7 @@ class DailyVeilCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final veilReading = _getVeilReading();
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -18,18 +18,18 @@ class DailyVeilCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.twilightCard.withOpacity(0.6),
-            AppColors.darkPlum.withOpacity(0.4),
+            AppColors.twilightCard.withValues(alpha: 0.6),
+            AppColors.darkPlum.withValues(alpha: 0.4),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.amethystGlow.withOpacity(0.3),
+          color: AppColors.amethystGlow.withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.amethystGlow.withOpacity(0.1),
+            color: AppColors.amethystGlow.withValues(alpha: 0.1),
             blurRadius: 12,
             spreadRadius: 0,
           ),
@@ -64,7 +64,7 @@ class DailyVeilCard extends StatelessWidget {
                     Text(
                       veilReading.moonPhase,
                       style: TextStyle(
-                        color: AppColors.mutedLavender.withOpacity(0.8),
+                        color: AppColors.mutedLavender.withValues(alpha: 0.8),
                         fontSize: 12,
                       ),
                     ),
@@ -92,7 +92,7 @@ class DailyVeilCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: veilReading.thickness,
-                    backgroundColor: AppColors.shadeMist.withOpacity(0.3),
+                    backgroundColor: AppColors.shadeMist.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation(
                       veilReading.thickness > 0.7
                           ? AppColors.dustyRose
@@ -126,7 +126,7 @@ class DailyVeilCard extends StatelessWidget {
           Text(
             veilReading.message,
             style: TextStyle(
-              color: AppColors.lavenderWhite.withOpacity(0.9),
+              color: AppColors.lavenderWhite.withValues(alpha: 0.9),
               fontSize: 14,
               height: 1.5,
               fontStyle: FontStyle.italic,
@@ -142,66 +142,74 @@ class DailyVeilCard extends StatelessWidget {
 
   VeilReading _getVeilReading() {
     final now = DateTime.now();
-    
+
     // Calculate moon phase (approximate, 29.53 day cycle)
     final daysSinceNewMoon = (now.millisecondsSinceEpoch / 86400000) % 29.53;
     final phase = daysSinceNewMoon / 29.53;
-    
+
     String moonPhase;
     double thickness;
     String thicknessLabel;
     String message;
-    
+
     if (phase < 0.03 || phase > 0.97) {
       // New Moon - Thick veil
       moonPhase = 'New Moon';
       thickness = 0.2;
       thicknessLabel = 'Strong';
-      message = 'Darkness holds potential. New beginnings stir in shadow. Deep focus reveals hidden truths.';
+      message =
+          'Darkness holds potential. New beginnings stir in shadow. Deep focus reveals hidden truths.';
     } else if (phase < 0.22) {
       // Waxing Crescent - Thin veil
       moonPhase = 'Waxing Crescent';
       thickness = 0.75;
       thicknessLabel = 'Thin';
-      message = 'Growth whispers beyond. The spirits sense your intention. Perfect for communion.';
+      message =
+          'Growth whispers beyond. The spirits sense your intention. Perfect for communion.';
     } else if (phase < 0.28) {
       // First Quarter - Moderate
       moonPhase = 'First Quarter';
       thickness = 0.5;
       thicknessLabel = 'Moderate';
-      message = 'Perfect balance. Ask and you shall receive answers. Both seeking and listening favor you.';
+      message =
+          'Perfect balance. Ask and you shall receive answers. Both seeking and listening favor you.';
     } else if (phase < 0.47) {
       // Waxing Gibbous - Moderate
       moonPhase = 'Waxing Gibbous';
       thickness = 0.6;
       thicknessLabel = 'Moderate';
-      message = 'Anticipation builds. Something draws near to you. The threshold opens wider.';
+      message =
+          'Anticipation builds. Something draws near to you. The threshold opens wider.';
     } else if (phase < 0.53) {
       // Full Moon - Thinnest veil
       moonPhase = 'Full Moon';
       thickness = 0.95;
       thicknessLabel = 'Thin';
-      message = 'The boundary dissolves. They are waiting for you. Tonight, connection comes easily.';
+      message =
+          'The boundary dissolves. They are waiting for you. Tonight, connection comes easily.';
     } else if (phase < 0.72) {
       // Waning Gibbous - Thin
       moonPhase = 'Waning Gibbous';
       thickness = 0.75;
       thicknessLabel = 'Thin';
-      message = 'Wisdom lingers. Truths revealed now settle deeply. Reflect and commune with clarity.';
+      message =
+          'Wisdom lingers. Truths revealed now settle deeply. Reflect and commune with clarity.';
     } else if (phase < 0.78) {
       // Last Quarter - Moderate
       moonPhase = 'Last Quarter';
       thickness = 0.5;
       thicknessLabel = 'Moderate';
-      message = 'Transformation. Old connections fade, new ones form. The cycle turns in your favor.';
+      message =
+          'Transformation. Old connections fade, new ones form. The cycle turns in your favor.';
     } else {
       // Waning Crescent - Thin
       moonPhase = 'Waning Crescent';
       thickness = 0.7;
       thicknessLabel = 'Thin';
-      message = 'The quiet before dawn. Last whispers before renewal. What needs saying finds its voice.';
+      message =
+          'The quiet before dawn. Last whispers before renewal. What needs saying finds its voice.';
     }
-    
+
     return VeilReading(
       phaseValue: phase,
       moonPhase: moonPhase,

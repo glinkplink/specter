@@ -72,7 +72,7 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
             end: Alignment.bottomCenter,
             colors: [
               AppColors.deepVoid,
-              AppColors.darkPlum.withOpacity(0.5),
+              AppColors.darkPlum.withValues(alpha: 0.5),
               AppColors.deepVoid,
             ],
           ),
@@ -122,7 +122,7 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                       gradient: spiritBoxState.isScanning
                           ? RadialGradient(
                               colors: [
-                                AppColors.amethystGlow.withOpacity(0.3),
+                                AppColors.amethystGlow.withValues(alpha: 0.3),
                                 Colors.transparent,
                               ],
                             )
@@ -130,7 +130,8 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                       boxShadow: spiritBoxState.isScanning
                           ? [
                               BoxShadow(
-                                color: AppColors.amethystGlow.withOpacity(0.5),
+                                color: AppColors.amethystGlow
+                                    .withValues(alpha: 0.5),
                                 blurRadius: 24,
                                 spreadRadius: 6,
                               ),
@@ -143,7 +144,9 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                           ? AppColors.dustyRose
                           : AppColors.amethystGlow,
                       child: Icon(
-                        spiritBoxState.isScanning ? Icons.stop : Icons.graphic_eq,
+                        spiritBoxState.isScanning
+                            ? Icons.stop
+                            : Icons.graphic_eq,
                         size: 48,
                         color: AppColors.deepVoid,
                       ),
@@ -159,7 +162,7 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                         : 'Await the voices',
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.mutedLavender.withOpacity(0.7),
+                      color: AppColors.mutedLavender.withValues(alpha: 0.7),
                       letterSpacing: 1.2,
                       fontStyle: FontStyle.italic,
                     ),
@@ -176,10 +179,8 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
               Positioned.fill(
                 child: IgnorePointer(
                   child: Container(
-                    color: AppColors.amethystGlow.withOpacity(0.15),
-                  )
-                      .animate()
-                      .fadeOut(duration: 200.ms),
+                    color: AppColors.amethystGlow.withValues(alpha: 0.15),
+                  ).animate().fadeOut(duration: 200.ms),
                 ),
               ),
           ],

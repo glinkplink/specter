@@ -29,19 +29,22 @@ class HomeScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   AppColors.deepVoid,
-                  AppColors.darkPlum.withOpacity(0.8),
+                  AppColors.darkPlum.withValues(alpha: 0.8),
                   AppColors.deepVoid,
                 ],
               ),
             ),
           ),
-          
+
           // Starfield (behind everything)
           ...List.generate(36, (index) => _buildStar(index)),
-          
+
           // Shooting stars (behind content, occasional)
-          ...List.generate(2, (index) => ShootingStar(key: ValueKey('star_$index'), index: index)),
-          
+          ...List.generate(
+              2,
+              (index) =>
+                  ShootingStar(key: ValueKey('star_$index'), index: index)),
+
           // Content (on top of stars/shooting stars)
           SafeArea(
             child: SingleChildScrollView(
@@ -50,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    
+
                     // Large animated moon with enhanced glow
                     Container(
                       width: 140,
@@ -59,21 +62,20 @@ class HomeScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.amethystGlow.withOpacity(0.4),
+                            color:
+                                AppColors.amethystGlow.withValues(alpha: 0.4),
                             blurRadius: 60,
                             spreadRadius: 20,
                           ),
                           BoxShadow(
-                            color: AppColors.dustyRose.withOpacity(0.2),
+                            color: AppColors.dustyRose.withValues(alpha: 0.2),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
                         ],
                       ),
                       child: _buildLargeMoon(),
-                    )
-                        .animate(onPlay: (c) => c.repeat(reverse: true))
-                        .scale(
+                    ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
                           begin: const Offset(0.95, 0.95),
                           end: const Offset(1.05, 1.05),
                           duration: 4.seconds,
@@ -84,10 +86,11 @@ class HomeScreen extends StatelessWidget {
 
                     Text(
                       'What Lies Beyond?',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: AppColors.lavenderWhite,
-                            letterSpacing: 1.5,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: AppColors.lavenderWhite,
+                                letterSpacing: 1.5,
+                              ),
                       textAlign: TextAlign.center,
                     )
                         .animate()
@@ -103,9 +106,7 @@ class HomeScreen extends StatelessWidget {
                             height: 1.6,
                           ),
                       textAlign: TextAlign.center,
-                    )
-                        .animate()
-                        .fadeIn(duration: 800.ms, delay: 400.ms),
+                    ).animate().fadeIn(duration: 800.ms, delay: 400.ms),
 
                     const SizedBox(height: 48),
 
@@ -159,7 +160,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Floating particles (on top for depth)
           ...List.generate(15, (index) => _buildFloatingParticle(index)),
         ],
@@ -172,7 +173,7 @@ class HomeScreen extends StatelessWidget {
     final now = DateTime.now();
     final daysSinceNewMoon = (now.millisecondsSinceEpoch / 86400000) % 29.53;
     final phase = daysSinceNewMoon / 29.53;
-    
+
     return RotatingMoon(
       phase: phase,
       size: 140,
@@ -187,7 +188,7 @@ class HomeScreen extends StatelessWidget {
     final top = random.nextDouble() * 0.4; // Top 40% of screen
     final twinkleDuration = 2 + random.nextInt(4);
     final delay = random.nextInt(3);
-    
+
     return Positioned.fill(
       child: Align(
         alignment: Alignment(
@@ -199,10 +200,10 @@ class HomeScreen extends StatelessWidget {
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.lavenderWhite.withOpacity(0.8),
+            color: AppColors.lavenderWhite.withValues(alpha: 0.8),
             boxShadow: [
               BoxShadow(
-                color: AppColors.lavenderWhite.withOpacity(0.6),
+                color: AppColors.lavenderWhite.withValues(alpha: 0.6),
                 blurRadius: 2,
               ),
             ],
@@ -225,7 +226,7 @@ class HomeScreen extends StatelessWidget {
     final size = 2.0 + random.nextDouble() * 4;
     final duration = 8 + random.nextInt(15);
     final delay = random.nextInt(5);
-    
+
     return Positioned.fill(
       child: Align(
         alignment: Alignment(
@@ -237,10 +238,10 @@ class HomeScreen extends StatelessWidget {
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.amethystGlow.withOpacity(0.3),
+            color: AppColors.amethystGlow.withValues(alpha: 0.3),
             boxShadow: [
               BoxShadow(
-                color: AppColors.amethystGlow.withOpacity(0.5),
+                color: AppColors.amethystGlow.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 1,
               ),
@@ -278,17 +279,18 @@ class HomeScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.twilightCard.withOpacity(0.5),
+            color: AppColors.twilightCard.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isPremium
-                  ? AppColors.mysticGold.withOpacity(0.3)
-                  : AppColors.amethystGlow.withOpacity(0.2),
+                  ? AppColors.mysticGold.withValues(alpha: 0.3)
+                  : AppColors.amethystGlow.withValues(alpha: 0.2),
             ),
             boxShadow: [
               BoxShadow(
-                color: (isPremium ? AppColors.mysticGold : AppColors.amethystGlow)
-                    .withOpacity(0.1),
+                color:
+                    (isPremium ? AppColors.mysticGold : AppColors.amethystGlow)
+                        .withValues(alpha: 0.1),
                 blurRadius: 12,
                 spreadRadius: 0,
               ),
@@ -301,12 +303,15 @@ class HomeScreen extends StatelessWidget {
                 height: 48,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (isPremium ? AppColors.mysticGold : AppColors.amethystGlow)
-                      .withOpacity(0.2),
+                  color: (isPremium
+                          ? AppColors.mysticGold
+                          : AppColors.amethystGlow)
+                      .withValues(alpha: 0.2),
                 ),
                 child: Icon(
                   icon,
-                  color: isPremium ? AppColors.mysticGold : AppColors.amethystGlow,
+                  color:
+                      isPremium ? AppColors.mysticGold : AppColors.amethystGlow,
                   size: 24,
                 ),
               ),
@@ -333,7 +338,8 @@ class HomeScreen extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.mysticGold.withOpacity(0.2),
+                              color:
+                                  AppColors.mysticGold.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(

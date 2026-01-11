@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,11 +94,9 @@ class CommuneState {
   int get remainingSessions =>
       isPremium ? -1 : SupabaseConfig.maxFreeSessions - sessionCount;
 
-  bool get hasSeancesRemaining =>
-      isPremium || seanceCount < maxFreeSeances;
+  bool get hasSeancesRemaining => isPremium || seanceCount < maxFreeSeances;
 
-  int get remainingSeances =>
-      isPremium ? -1 : maxFreeSeances - seanceCount;
+  int get remainingSeances => isPremium ? -1 : maxFreeSeances - seanceCount;
 
   CommuneState copyWith({
     String? sessionId,
@@ -126,9 +125,11 @@ class CommuneState {
       isPremium: isPremium ?? this.isPremium,
       error: error,
       isRecordingSeance: isRecordingSeance ?? this.isRecordingSeance,
-      sessionSecondsRemaining: sessionSecondsRemaining ?? this.sessionSecondsRemaining,
+      sessionSecondsRemaining:
+          sessionSecondsRemaining ?? this.sessionSecondsRemaining,
       sessionStartTime: sessionStartTime ?? this.sessionStartTime,
-      pendingSummary: clearPendingSummary ? null : (pendingSummary ?? this.pendingSummary),
+      pendingSummary:
+          clearPendingSummary ? null : (pendingSummary ?? this.pendingSummary),
     );
   }
 }
@@ -191,7 +192,7 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
       role: MessageRole.spirit,
       content: _getSessionEndingMessage(),
     );
-    
+
     state = state.copyWith(
       messages: [...state.messages, fadingMessage],
     );
@@ -213,7 +214,8 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
 
   Future<bool> startSession() async {
     if (!state.hasSessionsRemaining) {
-      state = state.copyWith(error: 'No sessions remaining. Upgrade to continue.');
+      state =
+          state.copyWith(error: 'No sessions remaining. Upgrade to continue.');
       return false;
     }
 
@@ -247,7 +249,8 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
     _connectionStrengthTimer?.cancel();
     double strength = 0.0;
 
-    _connectionStrengthTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _connectionStrengthTimer =
+        Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (!state.isConnecting) {
         timer.cancel();
         return;
@@ -263,14 +266,16 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
   void _fluctuateConnectionStrength() {
     _connectionStrengthTimer?.cancel();
 
-    _connectionStrengthTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    _connectionStrengthTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (!state.isSessionActive) {
         timer.cancel();
         return;
       }
 
       final variation = (DateTime.now().millisecond % 20 - 10) / 100;
-      final newStrength = (state.connectionStrength + variation).clamp(0.5, 1.0);
+      final newStrength =
+          (state.connectionStrength + variation).clamp(0.5, 1.0);
 
       state = state.copyWith(connectionStrength: newStrength);
     });
@@ -298,24 +303,29 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
           .toList();
 
       // Call Supabase Edge Function
-      print('DEBUG: Calling edge function: ${SupabaseConfig.communeFunctionUrl}');
-      print('DEBUG: API Key: ${SupabaseConfig.supabaseAnonKey.substring(0, 20)}...');
+      if (kDebugMode) {
+        debugPrint(
+            'CommuneProvider: calling edge function ${SupabaseConfig.communeFunctionUrl}');
+      }
 
-      final response = await http.post(
-        Uri.parse(SupabaseConfig.communeFunctionUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${SupabaseConfig.supabaseAnonKey}',
-        },
-        body: jsonEncode({
-          'message': text.trim(),
-          'conversation_history': conversationHistory,
-          'seance_audio_recorded': isSeanceMessage,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse(SupabaseConfig.communeFunctionUrl),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ${SupabaseConfig.supabaseAnonKey}',
+            },
+            body: jsonEncode({
+              'message': text.trim(),
+              'conversation_history': conversationHistory,
+              'seance_audio_recorded': isSeanceMessage,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
-      print('DEBUG: Response status: ${response.statusCode}');
-      print('DEBUG: Response body: ${response.body}');
+      if (kDebugMode) {
+        debugPrint('CommuneProvider: response ${response.statusCode}');
+      }
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -338,7 +348,9 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
         throw Exception('Status ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('DEBUG: Error calling edge function: $e');
+      if (kDebugMode) {
+        debugPrint('CommuneProvider: error calling edge function: $e');
+      }
       // Fallback response if API fails
       final fallbackMessage = Message(
         role: MessageRole.spirit,
@@ -394,7 +406,8 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
 
   Future<bool> sendSeanceMessage() async {
     if (!state.hasSeancesRemaining) {
-      state = state.copyWith(error: 'Séance requires premium. Upgrade to unlock.');
+      state =
+          state.copyWith(error: 'Séance requires premium. Upgrade to unlock.');
       return false;
     }
 
@@ -413,17 +426,21 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
 
   // Get session summary before ending
   SessionSummary getSessionSummary() {
-    final spiritMessages = state.messages.where((m) => m.role == MessageRole.spirit).length;
-    final userMessages = state.messages.where((m) => m.role == MessageRole.user).length;
+    final spiritMessages =
+        state.messages.where((m) => m.role == MessageRole.spirit).length;
+    final userMessages =
+        state.messages.where((m) => m.role == MessageRole.user).length;
     final duration = state.sessionStartTime != null
         ? DateTime.now().difference(state.sessionStartTime!).inSeconds
         : 0;
-    
+
     return SessionSummary(
       messagesReceived: spiritMessages,
       questionsSent: userMessages,
       durationSeconds: duration,
-      remainingSessions: state.isPremium ? -1 : SupabaseConfig.maxFreeSessions - state.sessionCount - 1,
+      remainingSessions: state.isPremium
+          ? -1
+          : SupabaseConfig.maxFreeSessions - state.sessionCount - 1,
     );
   }
 
@@ -467,6 +484,7 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
   }
 }
 
-final communeProvider = StateNotifierProvider<CommuneNotifier, CommuneState>((ref) {
+final communeProvider =
+    StateNotifierProvider<CommuneNotifier, CommuneState>((ref) {
   return CommuneNotifier(ref);
 });

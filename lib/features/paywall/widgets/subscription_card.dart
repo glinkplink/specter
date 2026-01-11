@@ -27,13 +27,13 @@ class SubscriptionCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? AppColors.mysticGold
-                : AppColors.shadeMist.withOpacity(0.5),
+                : AppColors.shadeMist.withValues(alpha: 0.5),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.mysticGold.withOpacity(0.2),
+                    color: AppColors.mysticGold.withValues(alpha: 0.2),
                     blurRadius: 12,
                     spreadRadius: 0,
                   ),

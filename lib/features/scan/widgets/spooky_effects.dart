@@ -14,7 +14,8 @@ class StaticOverlay extends StatefulWidget {
   State<StaticOverlay> createState() => _StaticOverlayState();
 }
 
-class _StaticOverlayState extends State<StaticOverlay> with SingleTickerProviderStateMixin {
+class _StaticOverlayState extends State<StaticOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -74,7 +75,8 @@ class StaticNoisePainter extends CustomPainter {
       for (int y = 0; y < pixelsY; y++) {
         if (random.nextDouble() < intensity * 0.1) {
           final brightness = random.nextDouble();
-          paint.color = Colors.white.withOpacity(brightness * intensity * 0.3);
+          paint.color =
+              Colors.white.withValues(alpha: brightness * intensity * 0.3);
 
           canvas.drawRect(
             Rect.fromLTWH(
@@ -113,7 +115,7 @@ class VignetteOverlay extends StatelessWidget {
           radius: 1.0,
           colors: [
             Colors.transparent,
-            AppColors.deepBlack.withOpacity(0.3 + (intensity * 0.4)),
+            AppColors.deepVoid.withValues(alpha: 0.3 + (intensity * 0.4)),
           ],
           stops: const [0.3, 1.0],
         ),
@@ -136,7 +138,8 @@ class ScreenFlicker extends StatefulWidget {
   State<ScreenFlicker> createState() => _ScreenFlickerState();
 }
 
-class _ScreenFlickerState extends State<ScreenFlicker> with SingleTickerProviderStateMixin {
+class _ScreenFlickerState extends State<ScreenFlicker>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -195,7 +198,8 @@ class SpectralGlow extends StatefulWidget {
   State<SpectralGlow> createState() => _SpectralGlowState();
 }
 
-class _SpectralGlowState extends State<SpectralGlow> with SingleTickerProviderStateMixin {
+class _SpectralGlowState extends State<SpectralGlow>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -225,7 +229,8 @@ class _SpectralGlowState extends State<SpectralGlow> with SingleTickerProviderSt
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: AppColors.spectralGreen.withOpacity(effectiveIntensity * 0.3),
+                color: AppColors.amethystGlow
+                    .withValues(alpha: effectiveIntensity * 0.3),
                 blurRadius: 20 + (effectiveIntensity * 40),
                 spreadRadius: 5,
               ),
@@ -250,7 +255,8 @@ class ScanningOverlay extends StatefulWidget {
   State<ScanningOverlay> createState() => _ScanningOverlayState();
 }
 
-class _ScanningOverlayState extends State<ScanningOverlay> with SingleTickerProviderStateMixin {
+class _ScanningOverlayState extends State<ScanningOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -313,7 +319,7 @@ class ScanLinePainter extends CustomPainter {
       end: Alignment.bottomCenter,
       colors: [
         Colors.transparent,
-        AppColors.spectralGreen.withOpacity(0.5),
+        AppColors.amethystGlow.withValues(alpha: 0.5),
         Colors.transparent,
       ],
       stops: const [0.0, 0.5, 1.0],

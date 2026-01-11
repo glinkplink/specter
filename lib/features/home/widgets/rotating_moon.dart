@@ -21,12 +21,12 @@ class RotatingMoon extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: AppColors.amethystGlow.withOpacity(0.5),
+            color: AppColors.amethystGlow.withValues(alpha: 0.5),
             blurRadius: 40,
             spreadRadius: 5,
           ),
           BoxShadow(
-            color: AppColors.dustyRose.withOpacity(0.3),
+            color: AppColors.dustyRose.withValues(alpha: 0.3),
             blurRadius: 25,
             spreadRadius: 2,
           ),

@@ -47,7 +47,7 @@ class PremiumFeatureList extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.amethystGlow.withOpacity(0.15),
+            color: AppColors.amethystGlow.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -73,7 +73,7 @@ class PremiumFeatureList extends StatelessWidget {
               Text(
                 description,
                 style: TextStyle(
-                  color: AppColors.mutedLavender.withOpacity(0.9),
+                  color: AppColors.mutedLavender.withValues(alpha: 0.9),
                   fontSize: 14,
                 ),
               ),
