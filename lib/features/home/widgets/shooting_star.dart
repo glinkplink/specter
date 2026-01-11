@@ -52,10 +52,21 @@ class _ShootingStarState extends State<ShootingStar>
     // Seed with index for variety
     final seed = Random(widget.index + DateTime.now().millisecondsSinceEpoch ~/ 10000);
     
-    _startX = seed.nextDouble() * 0.8 + 0.1; // 10-90% of screen width
-    _startY = seed.nextDouble() * 0.25; // Top 25% of screen
-    _angle = 0.4 + seed.nextDouble() * 0.6; // Diagonal angle (radians)
-    _delay = 15.0 + seed.nextDouble() * 25.0; // 15-40 second delay (much less frequent)
+    // 50% top-left, 50% top-right
+    final isTopLeft = seed.nextBool();
+    
+    if (isTopLeft) {
+      // Top-left to bottom-right diagonal
+      _startX = seed.nextDouble() * 0.2; // 0-20% from left
+      _angle = 0.65 + seed.nextDouble() * 0.25; // 37-52 degrees (diagonal down-right)
+    } else {
+      // Top-right to bottom-left diagonal
+      _startX = 0.8 + seed.nextDouble() * 0.2; // 80-100% from left
+      _angle = 2.09 + seed.nextDouble() * 0.25; // 120-135 degrees (diagonal down-left)
+    }
+    
+    _startY = seed.nextDouble() * 0.1; // Top 0-10% of screen
+    _delay = 15.0 + seed.nextDouble() * 25.0; // 15-40 second delay
     _speed = 1.0 + seed.nextDouble() * 0.5; // Speed multiplier
   }
 
@@ -99,9 +110,25 @@ class _ShootingStarState extends State<ShootingStar>
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
         
-        final startPosX = _startX * screenWidth;
-        final startPosY = _startY * screenHeight;
-        final travelDistance = screenWidth * 1.2;
+        // Start position on outer edges of screen
+        // Top-left: start from left edge (X: 0) and top area (Y: 0-10%)
+        // Top-right: start from right edge (X: screenWidth) and top area (Y: 0-10%)
+        final seed = Random(widget.index + DateTime.now().millisecondsSinceEpoch ~/ 10000);
+        final isTopLeft = _startX < 0.5; // Determine direction from startX
+        
+        double startPosX, startPosY;
+        if (isTopLeft) {
+          // Start from left edge, top area
+          startPosX = 0; // Left edge
+          startPosY = seed.nextDouble() * screenHeight * 0.1; // Top 0-10%
+        } else {
+          // Start from right edge, top area
+          startPosX = screenWidth; // Right edge
+          startPosY = seed.nextDouble() * screenHeight * 0.1; // Top 0-10%
+        }
+        
+        // Travel distance to cross entire screen
+        final travelDistance = screenWidth * 1.5;
         
         return AnimatedBuilder(
           animation: _animation,
