@@ -58,16 +58,19 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
       appBar: AppBar(
         title: const Text('SPIRIT BOX'),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.deepBlack,
-              AppColors.darkGray.withOpacity(0.5),
-              AppColors.deepBlack,
+              AppColors.deepVoid,
+              AppColors.darkPlum.withOpacity(0.5),
+              AppColors.deepVoid,
             ],
           ),
         ),
@@ -116,7 +119,7 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                       gradient: spiritBoxState.isScanning
                           ? RadialGradient(
                               colors: [
-                                AppColors.spectralGreen.withOpacity(0.3),
+                                AppColors.amethystGlow.withOpacity(0.3),
                                 Colors.transparent,
                               ],
                             )
@@ -124,9 +127,9 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                       boxShadow: spiritBoxState.isScanning
                           ? [
                               BoxShadow(
-                                color: AppColors.spectralGreen.withOpacity(0.5),
-                                blurRadius: 20,
-                                spreadRadius: 5,
+                                color: AppColors.amethystGlow.withOpacity(0.5),
+                                blurRadius: 24,
+                                spreadRadius: 6,
                               ),
                             ]
                           : null,
@@ -134,12 +137,12 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                     child: FloatingActionButton.large(
                       onPressed: _toggleScanning,
                       backgroundColor: spiritBoxState.isScanning
-                          ? AppColors.zoneActive
-                          : AppColors.ghostlyPurple,
+                          ? AppColors.dustyRose
+                          : AppColors.amethystGlow,
                       child: Icon(
                         spiritBoxState.isScanning ? Icons.stop : Icons.graphic_eq,
                         size: 48,
-                        color: AppColors.boneWhite,
+                        color: AppColors.deepVoid,
                       ),
                     ),
                   ),
@@ -149,12 +152,13 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
                   // Status text
                   Text(
                     spiritBoxState.isScanning
-                        ? 'Scanning frequencies...'
-                        : 'Ready to communicate',
+                        ? 'Listening through the static...'
+                        : 'Await the voices',
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.boneWhite.withOpacity(0.6),
+                      color: AppColors.mutedLavender.withOpacity(0.7),
                       letterSpacing: 1.2,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
 
@@ -169,7 +173,7 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
               Positioned.fill(
                 child: IgnorePointer(
                   child: Container(
-                    color: AppColors.spectralGreen.withOpacity(0.1),
+                    color: AppColors.amethystGlow.withOpacity(0.15),
                   )
                       .animate()
                       .fadeOut(duration: 200.ms),

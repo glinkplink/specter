@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../providers/commune_provider.dart';
 
@@ -79,15 +80,15 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.ghostlyPurple.withOpacity(0.6),
-                  AppColors.ghostlyPurple.withOpacity(0.2),
+                  AppColors.amethystGlow.withOpacity(0.6),
+                  AppColors.plumVeil.withOpacity(0.2),
                 ],
               ),
             ),
             child: Icon(
               widget.message.isSeanceResponse ? Icons.hearing : Icons.auto_awesome,
               size: 18,
-              color: AppColors.boneWhite.withOpacity(0.8),
+              color: AppColors.lavenderWhite.withOpacity(0.8),
             ),
           )
               .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -103,7 +104,7 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.midGray.withOpacity(0.3),
+                color: AppColors.twilightCard.withOpacity(0.5),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(4),
                   topRight: Radius.circular(16),
@@ -111,13 +112,13 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
                   bottomRight: Radius.circular(16),
                 ),
                 border: Border.all(
-                  color: AppColors.ghostlyPurple.withOpacity(0.3),
+                  color: AppColors.amethystGlow.withOpacity(0.3),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.ghostlyPurple.withOpacity(0.1),
-                    blurRadius: 12,
+                    color: AppColors.amethystGlow.withOpacity(0.15),
+                    blurRadius: 16,
                     spreadRadius: 2,
                   ),
                 ],
@@ -132,15 +133,15 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
                         Icon(
                           Icons.graphic_eq,
                           size: 12,
-                          color: AppColors.ghostlyPurple.withOpacity(0.7),
+                          color: AppColors.dustyRose.withOpacity(0.8),
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'FROM THE STATIC',
+                          'FROM THE SILENCE',
                           style: TextStyle(
                             fontSize: 10,
                             letterSpacing: 2,
-                            color: AppColors.ghostlyPurple.withOpacity(0.7),
+                            color: AppColors.dustyRose.withOpacity(0.8),
                           ),
                         ),
                       ],
@@ -149,7 +150,7 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
                   ],
 
                   // Message text with materialization effect
-                  _buildMessageText(),
+                  _buildMessageText(context),
                 ],
               ),
             )
@@ -162,17 +163,21 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
     );
   }
 
-  Widget _buildMessageText() {
+  Widget _buildMessageText(BuildContext context) {
+    // Use Lora italic for spirit messages - mystical serif feel
+    final spiritTextStyle = GoogleFonts.lora(
+      color: AppColors.lavenderWhite.withOpacity(0.9),
+      fontSize: 16,
+      height: 1.6,
+      fontStyle: FontStyle.italic,
+      letterSpacing: 0.3,
+    );
+
     if (!widget.isLatest || _isComplete) {
       // Static glow effect for complete messages
       return Text(
         widget.message.content,
-        style: TextStyle(
-          color: AppColors.boneWhite.withOpacity(0.9),
-          fontSize: 16,
-          height: 1.5,
-          fontStyle: FontStyle.italic,
-        ),
+        style: spiritTextStyle,
       );
     }
 
@@ -182,12 +187,7 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
         children: [
           TextSpan(
             text: _displayedText,
-            style: TextStyle(
-              color: AppColors.boneWhite.withOpacity(0.9),
-              fontSize: 16,
-              height: 1.5,
-              fontStyle: FontStyle.italic,
-            ),
+            style: spiritTextStyle,
           ),
           // Blinking cursor
           WidgetSpan(
@@ -195,7 +195,7 @@ class _SpiritMessageBubbleState extends State<SpiritMessageBubble> {
               width: 2,
               height: 18,
               margin: const EdgeInsets.only(left: 2),
-              color: AppColors.ghostlyPurple,
+              color: AppColors.amethystGlow,
             )
                 .animate(onPlay: (c) => c.repeat())
                 .fadeIn(duration: 400.ms)

@@ -81,8 +81,8 @@ class _NavigationShellState extends State<NavigationShell> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepBlack.withValues(alpha:0.3),
-              blurRadius: 10,
+              color: AppColors.deepVoid.withValues(alpha: 0.5),
+              blurRadius: 12,
               offset: const Offset(0, -3),
             ),
           ],
@@ -91,8 +91,8 @@ class _NavigationShellState extends State<NavigationShell> {
           selectedIndex: _currentIndex,
           onDestinationSelected: _onDestinationSelected,
           destinations: _destinations,
-          backgroundColor: AppColors.darkGray,
-          indicatorColor: AppColors.spectralGreen.withValues(alpha:0.2),
+          backgroundColor: AppColors.darkPlum,
+          indicatorColor: AppColors.amethystGlow.withValues(alpha: 0.2),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         ),
       ),

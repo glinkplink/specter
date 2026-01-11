@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,7 +54,6 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
   }
 
   final _revenueCatService = RevenueCatService();
-  StreamSubscription<CustomerInfo>? _customerInfoSubscription;
 
   /// Initialize RevenueCat and check premium status
   Future<void> _initialize() async {
@@ -86,20 +86,8 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
       // Load offerings
       final offerings = await _revenueCatService.getOfferings();
 
-      // Listen to customer info updates for real-time changes
-      _customerInfoSubscription =
-          _revenueCatService.customerInfoStream?.listen(
-        (customerInfo) {
-          final isPremium = customerInfo
-                  .entitlements.all[RevenueCatConfig.premiumEntitlementId]
-                  ?.isActive ??
-              false;
-          if (kDebugMode) {
-            print('PremiumProvider: Customer info updated - isPremium: $isPremium');
-          }
-          state = state.copyWith(isPremium: isPremium);
-        },
-      );
+      // Note: Customer info stream listening removed - use manual refresh instead
+      // RevenueCat v7 uses addCustomerInfoUpdateListener callback pattern
 
       state = state.copyWith(
         isPremium: isPremium,
@@ -272,7 +260,6 @@ class PremiumNotifier extends StateNotifier<PremiumState> {
 
   @override
   void dispose() {
-    _customerInfoSubscription?.cancel();
     super.dispose();
   }
 }

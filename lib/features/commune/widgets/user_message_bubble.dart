@@ -24,7 +24,7 @@ class UserMessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.ghostlyPurple.withOpacity(0.2),
+                color: AppColors.shadeMist.withOpacity(0.4),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(4),
@@ -32,14 +32,14 @@ class UserMessageBubble extends StatelessWidget {
                   bottomRight: Radius.circular(16),
                 ),
                 border: Border.all(
-                  color: AppColors.ghostlyPurple.withOpacity(0.4),
+                  color: AppColors.mutedLavender.withOpacity(0.2),
                   width: 1,
                 ),
               ),
               child: Text(
                 message.content,
                 style: TextStyle(
-                  color: AppColors.boneWhite,
+                  color: AppColors.lavenderWhite,
                   fontSize: 16,
                   height: 1.5,
                 ),
@@ -57,16 +57,16 @@ class UserMessageBubble extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.midGray.withOpacity(0.5),
+              color: AppColors.twilightCard.withOpacity(0.6),
               border: Border.all(
-                color: AppColors.lightGray.withOpacity(0.3),
+                color: AppColors.mutedLavender.withOpacity(0.3),
                 width: 1,
               ),
             ),
             child: Icon(
               Icons.person,
               size: 20,
-              color: AppColors.boneWhite.withOpacity(0.7),
+              color: AppColors.lavenderWhite.withOpacity(0.7),
             ),
           ),
         ],

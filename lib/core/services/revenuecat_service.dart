@@ -19,10 +19,8 @@ class RevenueCatService {
 
   bool _isInitialized = false;
 
-  /// Stream of customer info updates
-  /// Returns null if not initialized or on web platform
-  Stream<CustomerInfo>? get customerInfoStream =>
-      _isInitialized ? Purchases.customerInfoStream : null;
+  /// Check if initialized
+  bool get isInitialized => _isInitialized;
 
   /// Initialize RevenueCat SDK
   ///

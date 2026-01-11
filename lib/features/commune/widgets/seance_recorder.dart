@@ -68,10 +68,10 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.darkGray,
+        color: AppColors.darkPlum,
         border: Border(
           top: BorderSide(
-            color: AppColors.ghostlyPurple.withOpacity(0.5),
+            color: AppColors.amethystGlow.withOpacity(0.5),
             width: 1,
           ),
         ),
@@ -91,7 +91,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.zoneActive,
+                      color: AppColors.dustyRose,
                     ),
                   )
                       .animate(onPlay: (c) => c.repeat())
@@ -100,9 +100,9 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                       .fadeOut(duration: 500.ms),
                   const SizedBox(width: 12),
                   Text(
-                    'SÉANCE MODE',
+                    'SÉANCE',
                     style: TextStyle(
-                      color: AppColors.boneWhite,
+                      color: AppColors.lavenderWhite,
                       fontSize: 14,
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                 onPressed: widget.onCancel,
                 icon: Icon(
                   Icons.close,
-                  color: AppColors.lightGray,
+                  color: AppColors.dimLavender,
                 ),
                 tooltip: 'Cancel',
               ),
@@ -135,7 +135,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                   width: 4,
                   height: 60 * height,
                   decoration: BoxDecoration(
-                    color: AppColors.ghostlyPurple.withOpacity(0.8),
+                    color: AppColors.dustyRose.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 );
@@ -147,9 +147,9 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
 
           // Instructions
           Text(
-            'Recording ambient audio...',
+            'Listening to the silence...',
             style: TextStyle(
-              color: AppColors.boneWhite.withOpacity(0.7),
+              color: AppColors.lavenderWhite.withOpacity(0.8),
               fontSize: 14,
               fontStyle: FontStyle.italic,
             ),
@@ -158,9 +158,9 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
           const SizedBox(height: 8),
 
           Text(
-            'The spirits listen for patterns in the static',
+            'The spirits find meaning in the static',
             style: TextStyle(
-              color: AppColors.ghostlyPurple.withOpacity(0.6),
+              color: AppColors.amethystGlow.withOpacity(0.7),
               fontSize: 12,
             ),
           ),
@@ -178,8 +178,8 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                 child: CircularProgressIndicator(
                   value: 1 - (_remainingSeconds / _recordDuration),
                   strokeWidth: 4,
-                  backgroundColor: AppColors.midGray.withOpacity(0.3),
-                  valueColor: AlwaysStoppedAnimation(AppColors.ghostlyPurple),
+                  backgroundColor: AppColors.twilightCard.withOpacity(0.4),
+                  valueColor: AlwaysStoppedAnimation(AppColors.amethystGlow),
                 ),
               ),
               // Countdown text
@@ -188,7 +188,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                   Text(
                     '$_remainingSeconds',
                     style: TextStyle(
-                      color: AppColors.boneWhite,
+                      color: AppColors.lavenderWhite,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
@@ -196,7 +196,7 @@ class _SeanceRecorderState extends State<SeanceRecorder> {
                   Text(
                     'sec',
                     style: TextStyle(
-                      color: AppColors.lightGray,
+                      color: AppColors.dimLavender,
                       fontSize: 12,
                     ),
                   ),

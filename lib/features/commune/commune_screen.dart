@@ -71,21 +71,21 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
     final shouldEnd = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.darkGray,
-        title: const Text('End Session?'),
+        backgroundColor: AppColors.darkPlum,
+        title: const Text('Close the Connection?'),
         content: const Text(
-          'The spirit connection will be severed. This session will count toward your limit.',
+          'The veil will close, and this communion will be complete.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Continue Session'),
+            child: const Text('Continue'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'End Session',
-              style: TextStyle(color: AppColors.zoneActive),
+              'Close',
+              style: TextStyle(color: AppColors.dustyRose),
             ),
           ),
         ],
@@ -284,7 +284,8 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.ghostlyPurple.withOpacity(0.3),
+                    AppColors.amethystGlow.withOpacity(0.4),
+                    AppColors.plumVeil.withOpacity(0.1),
                     Colors.transparent,
                   ],
                 ),
@@ -292,7 +293,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               child: Icon(
                 Icons.auto_awesome,
                 size: 60,
-                color: AppColors.ghostlyPurple,
+                color: AppColors.amethystGlow,
               ),
             )
                 .animate(onPlay: (controller) => controller.repeat(reverse: true))
@@ -303,7 +304,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
             Text(
               'Reach Beyond the Veil',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppColors.boneWhite,
+                    color: AppColors.lavenderWhite,
                     letterSpacing: 2,
                   ),
               textAlign: TextAlign.center,
@@ -312,9 +313,9 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
             const SizedBox(height: 16),
 
             Text(
-              'Open a channel to communicate with spirits. Ask questions and receive messages from beyond.',
+              'Speak across the threshold. Ask what weighs on your heart, and listen for those who answer.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.boneWhite.withOpacity(0.7),
+                    color: AppColors.mutedLavender.withOpacity(0.9),
                   ),
               textAlign: TextAlign.center,
             ),
@@ -326,17 +327,20 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.midGray.withOpacity(0.5),
+                  color: AppColors.twilightCard.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.amethystGlow.withOpacity(0.2),
+                  ),
                 ),
                 child: Text(
                   communeState.hasSessionsRemaining
-                      ? '${communeState.remainingSessions} sessions remaining'
-                      : 'No sessions remaining',
+                      ? '${communeState.remainingSessions} ${communeState.remainingSessions == 1 ? 'session' : 'sessions'} remaining'
+                      : 'The veil has closed',
                   style: TextStyle(
                     color: communeState.hasSessionsRemaining
-                        ? AppColors.boneWhite.withOpacity(0.7)
-                        : AppColors.zoneActive,
+                        ? AppColors.mutedLavender
+                        : AppColors.dustyRose,
                   ),
                 ),
               ),
@@ -348,15 +352,15 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               ElevatedButton(
                 onPressed: _startSession,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.ghostlyPurple,
-                  foregroundColor: AppColors.boneWhite,
+                  backgroundColor: AppColors.amethystGlow,
+                  foregroundColor: AppColors.lavenderWhite,
                   padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text(
-                  'Begin Session',
+                  'Open the Veil',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -371,30 +375,32 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 margin: const EdgeInsets.only(bottom: 24),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.ghostlyPurple.withOpacity(0.2),
-                      AppColors.ghostlyPurple.withOpacity(0.05),
+                      AppColors.amethystGlow.withOpacity(0.15),
+                      AppColors.plumVeil.withOpacity(0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.ghostlyPurple.withOpacity(0.3),
+                    color: AppColors.amethystGlow.withOpacity(0.3),
                   ),
                 ),
                 child: Column(
                   children: [
                     Icon(
                       Icons.sensors,
-                      color: AppColors.ghostlyPurple,
+                      color: AppColors.dustyRose,
                       size: 32,
                     )
                         .animate(onPlay: (c) => c.repeat(reverse: true))
                         .fade(begin: 0.5, end: 1.0, duration: 1500.ms),
                     const SizedBox(height: 12),
                     Text(
-                      'A presence is waiting...',
+                      'A presence lingers...',
                       style: TextStyle(
-                        color: AppColors.ghostlyPurple,
+                        color: AppColors.dustyRose,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         fontStyle: FontStyle.italic,
@@ -402,9 +408,9 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Something important was left unsaid.\nThe spirits have more to reveal.',
+                      'Words left unspoken. Answers yet to come.\nThe spirits await your return.',
                       style: TextStyle(
-                        color: AppColors.boneWhite.withOpacity(0.7),
+                        color: AppColors.mutedLavender.withOpacity(0.8),
                         fontSize: 13,
                       ),
                       textAlign: TextAlign.center,
@@ -415,15 +421,15 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               ElevatedButton(
                 onPressed: () => context.push('/paywall'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.spectralGreen,
-                  foregroundColor: AppColors.deepBlack,
+                  backgroundColor: AppColors.mysticGold,
+                  foregroundColor: AppColors.deepVoid,
                   padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text(
-                  'Upgrade to Premium',
+                  'Unlock the Veil',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -450,13 +456,13 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
               Icon(
                 Icons.sensors,
                 size: 16,
-                color: AppColors.ghostlyPurple.withOpacity(communeState.connectionStrength),
+                color: AppColors.amethystGlow.withOpacity(communeState.connectionStrength),
               ),
               const SizedBox(width: 8),
               Text(
-                'Connection: ${(communeState.connectionStrength * 100).toInt()}%',
+                'The Veil: ${(communeState.connectionStrength * 100).toInt()}%',
                 style: TextStyle(
-                  color: AppColors.boneWhite.withOpacity(0.6),
+                  color: AppColors.mutedLavender.withOpacity(0.8),
                   fontSize: 12,
                 ),
               ),
@@ -465,16 +471,16 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 Icons.hourglass_bottom,
                 size: 14,
                 color: communeState.sessionSecondsRemaining < 60
-                    ? AppColors.zoneActive
-                    : AppColors.boneWhite.withOpacity(0.5),
+                    ? AppColors.dustyRose
+                    : AppColors.mutedLavender.withOpacity(0.5),
               ),
               const SizedBox(width: 4),
               Text(
                 _formatTime(communeState.sessionSecondsRemaining),
                 style: TextStyle(
                   color: communeState.sessionSecondsRemaining < 60
-                      ? AppColors.zoneActive
-                      : AppColors.boneWhite.withOpacity(0.6),
+                      ? AppColors.dustyRose
+                      : AppColors.mutedLavender.withOpacity(0.8),
                   fontSize: 12,
                   fontWeight: communeState.sessionSecondsRemaining < 60 
                       ? FontWeight.bold 
@@ -490,9 +496,9 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
           child: communeState.messages.isEmpty
               ? Center(
                   child: Text(
-                    'The spirits await your question...',
+                    'Speak... they are listening...',
                     style: TextStyle(
-                      color: AppColors.boneWhite.withOpacity(0.5),
+                      color: AppColors.mutedLavender.withOpacity(0.6),
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -526,14 +532,14 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(AppColors.ghostlyPurple),
+                    valueColor: AlwaysStoppedAnimation(AppColors.amethystGlow),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'The spirit responds...',
+                  'A voice emerges...',
                   style: TextStyle(
-                    color: AppColors.ghostlyPurple,
+                    color: AppColors.amethystGlow,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -559,11 +565,11 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.darkGray,
+              color: AppColors.darkPlum,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.deepBlack.withOpacity(0.5),
-                  blurRadius: 10,
+                  color: AppColors.deepVoid.withOpacity(0.7),
+                  blurRadius: 12,
                   offset: const Offset(0, -5),
                 ),
               ],
@@ -581,9 +587,9 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Séance mode requires premium'),
+                                content: const Text('Séance requires premium'),
                                 action: SnackBarAction(
-                                  label: 'Upgrade',
+                                  label: 'Unlock',
                                   onPressed: () => context.push('/paywall'),
                                 ),
                               ),
@@ -595,10 +601,10 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                       Icon(
                         Icons.mic,
                         color: communeState.isConnecting
-                            ? AppColors.lightGray
+                            ? AppColors.dimLavender
                             : communeState.hasSeancesRemaining
-                                ? AppColors.ghostlyPurple
-                                : AppColors.lightGray,
+                                ? AppColors.amethystGlow
+                                : AppColors.dimLavender,
                       ),
                       if (!communeState.hasSeancesRemaining)
                         Positioned(
@@ -607,14 +613,14 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                           child: Icon(
                             Icons.lock,
                             size: 12,
-                            color: AppColors.zoneActive,
+                            color: AppColors.mysticGold,
                           ),
                         ),
                     ],
                   ),
                   tooltip: communeState.hasSeancesRemaining 
-                      ? 'Séance Mode' 
-                      : 'Séance Mode (Premium)',
+                      ? 'Séance' 
+                      : 'Séance (Premium)',
                 ),
                 const SizedBox(width: 8),
 
@@ -623,20 +629,24 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                   child: TextField(
                     controller: _messageController,
                     enabled: !communeState.isConnecting,
+                    style: TextStyle(color: AppColors.lavenderWhite),
                     decoration: InputDecoration(
-                      hintText: 'Ask the spirits...',
-                      hintStyle: TextStyle(color: AppColors.lightGray),
+                      hintText: 'Speak to the beyond...',
+                      hintStyle: TextStyle(
+                        color: AppColors.dimLavender,
+                        fontStyle: FontStyle.italic,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(color: AppColors.lightGray),
+                        borderSide: BorderSide(color: AppColors.shadeMist),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(color: AppColors.lightGray),
+                        borderSide: BorderSide(color: AppColors.shadeMist),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(color: AppColors.ghostlyPurple),
+                        borderSide: BorderSide(color: AppColors.amethystGlow),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -652,12 +662,12 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
                 FloatingActionButton(
                   onPressed: communeState.isConnecting ? null : _sendMessage,
                   mini: true,
-                  backgroundColor: AppColors.ghostlyPurple,
+                  backgroundColor: AppColors.amethystGlow,
                   child: Icon(
                     Icons.send,
                     color: communeState.isConnecting
-                        ? AppColors.lightGray
-                        : AppColors.boneWhite,
+                        ? AppColors.dimLavender
+                        : AppColors.lavenderWhite,
                   ),
                 ),
               ],

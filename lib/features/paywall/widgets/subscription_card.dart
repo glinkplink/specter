@@ -22,14 +22,23 @@ class SubscriptionCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.midGray : AppColors.darkGray,
+          color: isSelected ? AppColors.twilightCard : AppColors.darkPlum,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? AppColors.spectralGreen
-                : AppColors.lightGray.withOpacity(0.3),
+                ? AppColors.mysticGold
+                : AppColors.shadeMist.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.mysticGold.withOpacity(0.2),
+                    blurRadius: 12,
+                    spreadRadius: 0,
+                  ),
+                ]
+              : null,
         ),
         child: Stack(
           children: [
@@ -45,8 +54,8 @@ class SubscriptionCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isSelected
-                            ? AppColors.spectralGreen
-                            : AppColors.lightGray,
+                            ? AppColors.mysticGold
+                            : AppColors.dimLavender,
                         width: 2,
                       ),
                     ),
@@ -57,7 +66,7 @@ class SubscriptionCard extends StatelessWidget {
                               height: 12,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: AppColors.spectralGreen,
+                                color: AppColors.mysticGold,
                               ),
                             ),
                           )
@@ -76,7 +85,7 @@ class SubscriptionCard extends StatelessWidget {
                               .first
                               .trim(),
                           style: const TextStyle(
-                            color: AppColors.boneWhite,
+                            color: AppColors.lavenderWhite,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -85,7 +94,7 @@ class SubscriptionCard extends StatelessWidget {
                           Text(
                             option.pricePerMonth,
                             style: const TextStyle(
-                              color: AppColors.spectralGreen,
+                              color: AppColors.mysticGold,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -98,7 +107,7 @@ class SubscriptionCard extends StatelessWidget {
                   Text(
                     option.price,
                     style: const TextStyle(
-                      color: AppColors.boneWhite,
+                      color: AppColors.lavenderWhite,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -116,7 +125,7 @@ class SubscriptionCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: const BoxDecoration(
-                    color: AppColors.spectralGreen,
+                    color: AppColors.mysticGold,
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(16),
                       bottomLeft: Radius.circular(16),
@@ -125,7 +134,7 @@ class SubscriptionCard extends StatelessWidget {
                   child: const Text(
                     'BEST VALUE',
                     style: TextStyle(
-                      color: AppColors.deepBlack,
+                      color: AppColors.deepVoid,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,

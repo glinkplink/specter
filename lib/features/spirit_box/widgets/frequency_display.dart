@@ -18,19 +18,19 @@ class FrequencyDisplay extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.darkGray.withOpacity(0.8),
+        color: AppColors.darkPlum.withOpacity(0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isScanning
-              ? AppColors.spectralGreen.withOpacity(0.5)
-              : AppColors.lightGray.withOpacity(0.3),
+              ? AppColors.amethystGlow.withOpacity(0.5)
+              : AppColors.shadeMist.withOpacity(0.3),
           width: 2,
         ),
         boxShadow: isScanning
             ? [
                 BoxShadow(
-                  color: AppColors.spectralGreen.withOpacity(0.2),
-                  blurRadius: 10,
+                  color: AppColors.amethystGlow.withOpacity(0.2),
+                  blurRadius: 12,
                   spreadRadius: 2,
                 ),
               ]
@@ -44,7 +44,7 @@ class FrequencyDisplay extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: AppColors.boneWhite.withOpacity(0.5),
+              color: AppColors.mutedLavender.withOpacity(0.6),
               letterSpacing: 2,
             ),
           ),
@@ -61,7 +61,7 @@ class FrequencyDisplay extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: isScanning ? AppColors.spectralGreen : AppColors.boneWhite,
+                  color: isScanning ? AppColors.amethystGlow : AppColors.lavenderWhite,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
@@ -71,7 +71,7 @@ class FrequencyDisplay extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.boneWhite.withOpacity(0.7),
+                  color: AppColors.mutedLavender.withOpacity(0.8),
                 ),
               ),
             ],
@@ -101,7 +101,7 @@ class FrequencyDisplay extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.symmetric(vertical: 18),
                 decoration: BoxDecoration(
-                  color: AppColors.lightGray.withOpacity(0.3),
+                  color: AppColors.shadeMist.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -125,11 +125,11 @@ class FrequencyDisplay extends StatelessWidget {
                     width: 3,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.spectralGreen,
+                      color: AppColors.amethystGlow,
                       borderRadius: BorderRadius.circular(2),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.spectralGreen.withOpacity(0.6),
+                          color: AppColors.amethystGlow.withOpacity(0.6),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -154,14 +154,14 @@ class FrequencyDisplay extends StatelessWidget {
         Container(
           width: 2,
           height: 8,
-          color: AppColors.boneWhite.withOpacity(0.5),
+          color: AppColors.mutedLavender.withOpacity(0.5),
         ),
         const SizedBox(height: 2),
         Text(
           label,
           style: TextStyle(
             fontSize: 10,
-            color: AppColors.boneWhite.withOpacity(0.5),
+            color: AppColors.mutedLavender.withOpacity(0.5),
             fontFeatures: const [FontFeature.tabularFigures()],
           ),
         ),

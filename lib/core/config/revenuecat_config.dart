@@ -12,10 +12,11 @@
 /// - Create products: premium_monthly, premium_annual
 /// - Link products to premium entitlement
 class RevenueCatConfig {
-  // RevenueCat Public API Key
-  // This key works for both iOS and Android in test/sandbox mode
-  // For production, switch to your prod_ key
-  static const String apiKey = 'test_RQGXUFuRlZkIPUAzGLvcEPxBadY';
+  // RevenueCat Public API Keys
+  // These keys work for iOS and Android in test/sandbox mode
+  // For production, switch to your prod_ keys
+  static const String appleApiKey = 'test_RQGXUFuRlZkIPUAzGLvcEPxBadY';
+  static const String googleApiKey = 'test_RQGXUFuRlZkIPUAzGLvcEPxBadY';
 
   // Entitlement identifier - Must match RevenueCat dashboard
   static const String premiumEntitlementId = 'premium';

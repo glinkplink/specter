@@ -23,8 +23,11 @@ class SubscriptionOption {
   /// Create subscription option from RevenueCat package
   factory SubscriptionOption.fromPackage(Package package) {
     final product = package.storeProduct;
-    final isAnnual =
-        product.subscriptionPeriod?.unit == PeriodUnit.year;
+    
+    // Check if annual by looking at the package type or identifier
+    final isAnnual = package.packageType == PackageType.annual ||
+        package.identifier.toLowerCase().contains('annual') ||
+        package.identifier.toLowerCase().contains('yearly');
 
     String pricePerMonth = product.priceString;
     if (isAnnual) {

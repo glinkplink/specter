@@ -11,26 +11,26 @@ class PremiumFeatureList extends StatelessWidget {
       children: [
         _buildFeature(
           icon: Icons.all_inclusive,
-          title: 'Unlimited Sessions',
-          description: 'Connect with spirits without limits',
+          title: 'Unlimited Communion',
+          description: 'Speak with spirits without limits',
         ),
         const SizedBox(height: 16),
         _buildFeature(
           icon: Icons.mic,
           title: 'Unlimited Séances',
-          description: 'Use audio recording for deeper communication',
+          description: 'Let your voice reach across the veil',
         ),
         const SizedBox(height: 16),
         _buildFeature(
           icon: Icons.access_time,
           title: 'Extended Sessions',
-          description: 'Longer conversations without time limits',
+          description: 'Longer conversations, deeper connections',
         ),
         const SizedBox(height: 16),
         _buildFeature(
           icon: Icons.support,
-          title: 'Priority Support',
-          description: 'Get help from the beyond, faster',
+          title: 'Priority Connection',
+          description: 'The spirits hear you first',
         ),
       ],
     );
@@ -47,12 +47,12 @@ class PremiumFeatureList extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.spectralGreen.withOpacity(0.1),
+            color: AppColors.amethystGlow.withOpacity(0.15),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: AppColors.spectralGreen,
+            color: AppColors.amethystGlow,
             size: 24,
           ),
         ),
@@ -64,7 +64,7 @@ class PremiumFeatureList extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  color: AppColors.boneWhite,
+                  color: AppColors.lavenderWhite,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -73,7 +73,7 @@ class PremiumFeatureList extends StatelessWidget {
               Text(
                 description,
                 style: TextStyle(
-                  color: AppColors.boneWhite.withOpacity(0.7),
+                  color: AppColors.mutedLavender.withOpacity(0.9),
                   fontSize: 14,
                 ),
               ),

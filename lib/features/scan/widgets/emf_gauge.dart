@@ -91,7 +91,7 @@ class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.spectralGreen.withOpacity(0.6),
+                      color: AppColors.dustyRose.withOpacity(0.6),
                       blurRadius: 60,
                       spreadRadius: 20,
                     ),
@@ -116,7 +116,7 @@ class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.deepBlack.withOpacity(0.8),
+                    color: AppColors.deepVoid.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: _getZoneColor(_animation.value).withOpacity(0.5),
@@ -152,15 +152,15 @@ class _EMFGaugeState extends State<EMFGauge> with SingleTickerProviderStateMixin
   }
 
   Color _getZoneColor(double level) {
-    if (level < 30) return Colors.green;
-    if (level < 60) return Colors.orange;
-    return Colors.red;
+    if (level < 30) return AppColors.zoneSafe;
+    if (level < 60) return AppColors.zoneModerate;
+    return AppColors.zoneActive;
   }
 
   String _getZoneLabel(double level) {
-    if (level < 30) return 'SAFE';
-    if (level < 60) return 'MODERATE';
-    return 'ACTIVE';
+    if (level < 30) return 'CALM';
+    if (level < 60) return 'STIRRING';
+    return 'PRESENCE';
   }
 }
 
@@ -180,15 +180,15 @@ class EMFGaugePainter extends CustomPainter {
 
     // Draw outer circle
     final outerPaint = Paint()
-      ..color = AppColors.darkGray
+      ..color = AppColors.twilightCard
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
     canvas.drawCircle(center, radius, outerPaint);
 
-    // Draw zone arcs
-    _drawZoneArc(canvas, center, radius, 0, 30, Colors.green);
-    _drawZoneArc(canvas, center, radius, 30, 60, Colors.orange);
-    _drawZoneArc(canvas, center, radius, 60, 100, Colors.red);
+    // Draw zone arcs with mystical purple tones
+    _drawZoneArc(canvas, center, radius, 0, 30, AppColors.zoneSafe);
+    _drawZoneArc(canvas, center, radius, 30, 60, AppColors.zoneModerate);
+    _drawZoneArc(canvas, center, radius, 60, 100, AppColors.zoneActive);
 
     // Draw tick marks
     _drawTickMarks(canvas, center, radius);
@@ -227,7 +227,7 @@ class EMFGaugePainter extends CustomPainter {
     const tickCount = 11;
 
     final tickPaint = Paint()
-      ..color = AppColors.boneWhite.withOpacity(0.5)
+      ..color = AppColors.mutedLavender.withOpacity(0.5)
       ..strokeWidth = 2;
 
     for (int i = 0; i < tickCount; i++) {
@@ -249,12 +249,12 @@ class EMFGaugePainter extends CustomPainter {
     final needleAngle = (startAngle + (sweepAngle * normalizedLevel)) * pi / 180;
 
     // Needle color based on spike
-    final needleColor = isSpike ? AppColors.spectralGreen : AppColors.boneWhite;
+    final needleColor = isSpike ? AppColors.dustyRose : AppColors.lavenderWhite;
 
     // Draw needle shadow for spike effect
     if (isSpike) {
       final shadowPaint = Paint()
-        ..color = AppColors.spectralGreen.withOpacity(0.5)
+        ..color = AppColors.dustyRose.withOpacity(0.5)
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round;
 
@@ -284,7 +284,7 @@ class EMFGaugePainter extends CustomPainter {
 
     // Draw outer pivot ring
     final pivotRingPaint = Paint()
-      ..color = AppColors.darkGray
+      ..color = AppColors.twilightCard
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 

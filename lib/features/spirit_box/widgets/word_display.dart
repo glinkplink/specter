@@ -26,19 +26,19 @@ class WordDisplay extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
             decoration: BoxDecoration(
-              color: AppColors.deepBlack.withOpacity(0.6),
+              color: AppColors.deepVoid.withOpacity(0.7),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: currentWord != null
-                    ? AppColors.spectralGreen.withOpacity(0.5)
-                    : AppColors.lightGray.withOpacity(0.2),
+                    ? AppColors.amethystGlow.withOpacity(0.5)
+                    : AppColors.shadeMist.withOpacity(0.3),
                 width: 2,
               ),
               boxShadow: currentWord != null
                   ? [
                       BoxShadow(
-                        color: AppColors.spectralGreen.withOpacity(0.3),
-                        blurRadius: 20,
+                        color: AppColors.amethystGlow.withOpacity(0.3),
+                        blurRadius: 24,
                         spreadRadius: 5,
                       ),
                     ]
@@ -60,12 +60,12 @@ class WordDisplay extends StatelessWidget {
   Widget _buildMainWord() {
     if (currentWord == null) {
       return Text(
-        isScanning ? '...' : 'READY',
+        isScanning ? '...' : 'AWAITING',
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 48,
           fontWeight: FontWeight.bold,
-          color: AppColors.boneWhite.withOpacity(0.3),
+          color: AppColors.dimLavender.withOpacity(0.4),
           letterSpacing: 4,
         ),
       );
@@ -77,7 +77,7 @@ class WordDisplay extends StatelessWidget {
       style: const TextStyle(
         fontSize: 56,
         fontWeight: FontWeight.bold,
-        color: AppColors.spectralGreen,
+        color: AppColors.dustyRose,
         letterSpacing: 2,
         height: 1.2,
       ),
@@ -88,7 +88,7 @@ class WordDisplay extends StatelessWidget {
         .then()
         .shimmer(
           duration: 400.ms,
-          color: AppColors.spectralGreen.withOpacity(0.5),
+          color: AppColors.dustyRose.withOpacity(0.5),
         );
   }
 
@@ -99,10 +99,10 @@ class WordDisplay extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'RECENT ACTIVITY',
+          'ECHOES',
           style: TextStyle(
             fontSize: 10,
-            color: AppColors.boneWhite.withOpacity(0.4),
+            color: AppColors.mutedLavender.withOpacity(0.5),
             letterSpacing: 2,
             fontWeight: FontWeight.bold,
           ),
@@ -120,7 +120,7 @@ class WordDisplay extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20 - (index * 3),
-                color: AppColors.spectralGreen.withOpacity(opacity.clamp(0.1, 1.0)),
+                color: AppColors.amethystGlow.withOpacity(opacity.clamp(0.1, 1.0)),
                 letterSpacing: 1,
               ),
             )

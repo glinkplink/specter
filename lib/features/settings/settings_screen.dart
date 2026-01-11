@@ -39,7 +39,7 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => context.push('/paywall'),
                 trailing: premiumState.isPremium
                     ? const Icon(Icons.check_circle,
-                        color: AppColors.spectralGreen)
+                        color: AppColors.mysticGold)
                     : null,
               ),
               if (premiumState.isPremium)
@@ -61,7 +61,7 @@ class SettingsScreen extends ConsumerWidget {
                                 : 'No purchases found',
                           ),
                           backgroundColor: success
-                              ? AppColors.spectralGreen
+                              ? AppColors.amethystGlow
                               : AppColors.zoneModerate,
                         ),
                       );
@@ -83,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
                     value: premiumState.debugModeEnabled,
                     onChanged: (_) =>
                         ref.read(premiumProvider.notifier).toggleDebugMode(),
-                    activeColor: AppColors.spectralGreen,
+                    activeColor: AppColors.amethystGlow,
                   ),
                 ),
             ],
@@ -168,13 +168,14 @@ class SettingsScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+          Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: AppColors.spectralGreen,
+                  color: AppColors.amethystGlow,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
                 ),
           ),
         ),
@@ -195,22 +196,24 @@ class SettingsScreen extends ConsumerWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: AppColors.ghostlyPurple,
+        color: AppColors.amethystGlow,
       ),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.bodyLarge,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: AppColors.lavenderWhite,
+            ),
       ),
       subtitle: Text(
         subtitle,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.lightGray,
+              color: AppColors.mutedLavender,
             ),
       ),
       trailing: trailing ??
           Icon(
             Icons.chevron_right,
-            color: AppColors.lightGray,
+            color: AppColors.dimLavender,
           ),
       onTap: onTap,
     );

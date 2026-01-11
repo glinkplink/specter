@@ -6,7 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/providers/premium_provider.dart';
 import 'widgets/premium_feature_list.dart';
 import 'widgets/subscription_card.dart';
-import 'models/subscription_option.dart';
+import 'models/subscription_option.dart' as models;
 
 /// Paywall screen for subscription purchases
 class PaywallScreen extends ConsumerStatefulWidget {
@@ -33,7 +33,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.deepBlack,
+      backgroundColor: AppColors.deepVoid,
       body: SafeArea(
         child: premiumState.isLoading && premiumState.offerings == null
             ? _buildLoadingState()
@@ -50,12 +50,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.spectralGreen),
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.amethystGlow),
           ),
           SizedBox(height: 16),
           Text(
-            'Loading premium options...',
-            style: TextStyle(color: AppColors.boneWhite),
+            'Preparing the veil...',
+            style: TextStyle(color: AppColors.lavenderWhite),
           ),
         ],
       ),
@@ -115,7 +115,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     }
 
     final subscriptionOptions = offering.availablePackages
-        .map((pkg) => SubscriptionOption.fromPackage(pkg))
+        .map((pkg) => models.SubscriptionOption.fromPackage(pkg))
         .toList();
 
     // Auto-select annual package if available, otherwise first package
@@ -140,24 +140,25 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               // Header
               const Icon(
                 Icons.auto_awesome,
-                color: AppColors.spectralGreen,
+                color: AppColors.mysticGold,
                 size: 64,
               ),
               const SizedBox(height: 16),
               const Text(
-                'Unlock Premium',
+                'Unlock the Veil',
                 style: TextStyle(
-                  color: AppColors.boneWhite,
+                  color: AppColors.lavenderWhite,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                'Connect with the spirit realm without limits',
+                'Commune without limits. The spirits await.',
                 style: TextStyle(
-                  color: AppColors.boneWhite.withOpacity(0.7),
+                  color: AppColors.mutedLavender.withOpacity(0.9),
                   fontSize: 16,
                 ),
                 textAlign: TextAlign.center,
@@ -170,9 +171,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
               // Subscription options
               const Text(
-                'Choose Your Plan',
+                'Choose Your Path',
                 style: TextStyle(
-                  color: AppColors.boneWhite,
+                  color: AppColors.lavenderWhite,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -194,13 +195,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               ElevatedButton(
                 onPressed: premiumState.isLoading ? null : _handlePurchase,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.spectralGreen,
-                  foregroundColor: AppColors.deepBlack,
+                  backgroundColor: AppColors.mysticGold,
+                  foregroundColor: AppColors.deepVoid,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  disabledBackgroundColor: AppColors.lightGray,
+                  disabledBackgroundColor: AppColors.dimLavender,
                 ),
                 child: premiumState.isLoading
                     ? const SizedBox(
@@ -209,11 +210,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.deepBlack),
+                              AppColors.deepVoid),
                         ),
                       )
                     : const Text(
-                        'Continue',
+                        'Open the Veil',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -229,7 +230,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 child: const Text(
                   'Restore Purchases',
                   style: TextStyle(
-                    color: AppColors.spectralGreen,
+                    color: AppColors.amethystGlow,
                     fontSize: 14,
                   ),
                 ),
@@ -241,7 +242,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               Text(
                 'Subscription auto-renews unless cancelled. Terms and privacy policy apply.',
                 style: TextStyle(
-                  color: AppColors.boneWhite.withOpacity(0.5),
+                  color: AppColors.dimLavender.withOpacity(0.7),
                   fontSize: 12,
                 ),
                 textAlign: TextAlign.center,
@@ -260,7 +261,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             onPressed: () => context.pop(),
             icon: const Icon(
               Icons.close,
-              color: AppColors.boneWhite,
+              color: AppColors.mutedLavender,
             ),
           ),
         ),
@@ -280,8 +281,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Welcome to Premium!'),
-          backgroundColor: AppColors.spectralGreen,
+          content: Text('The veil opens for you...'),
+          backgroundColor: AppColors.amethystGlow,
         ),
       );
       context.pop();
@@ -311,7 +312,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               : 'No purchases found to restore',
         ),
         backgroundColor:
-            success ? AppColors.spectralGreen : AppColors.zoneModerate,
+            success ? AppColors.amethystGlow : AppColors.zoneModerate,
       ),
     );
 
