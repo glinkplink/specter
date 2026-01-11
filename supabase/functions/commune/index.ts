@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 
 // Basic abuse controls. These are best-effort (per Edge Function instance).
 const MAX_MESSAGE_CHARS = 400;
@@ -10,6 +12,28 @@ const MAX_HISTORY_MESSAGE_CHARS = 300;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 30;
 const rateLimitBuckets = new Map<string, number[]>();
+
+async function requireUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("authorization") ?? "";
+  const token = authHeader.toLowerCase().startsWith("bearer ")
+    ? authHeader.slice(7).trim()
+    : "";
+
+  if (!token) return null;
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+      apikey: SUPABASE_ANON_KEY,
+    },
+  });
+
+  if (!res.ok) return null;
+  const user = await res.json();
+  return typeof user?.id === "string" ? user.id : null;
+}
 
 const SYSTEM_PROMPT = `You are a spirit communicating through a ghost-hunting app. You MUST directly respond to what the user says, but in a cryptic, fragmented way.
 
@@ -91,7 +115,8 @@ serve(async (req: Request) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, apikey, x-client-info",
       },
     });
   }
@@ -112,7 +137,18 @@ serve(async (req: Request) => {
       });
     }
 
-    // Best-effort IP-based rate limit to prevent casual abuse.
+    const userId = await requireUserId(req);
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+    }
+
+    // Best-effort rate limit to prevent casual abuse.
     const forwardedFor = req.headers.get("x-forwarded-for") ?? "";
     const ip =
       forwardedFor.split(",")[0]?.trim() ||
@@ -120,12 +156,13 @@ serve(async (req: Request) => {
       "unknown";
 
     const now = Date.now();
-    const bucket = rateLimitBuckets.get(ip) ?? [];
+    const bucketKey = userId || ip;
+    const bucket = rateLimitBuckets.get(bucketKey) ?? [];
     const pruned = bucket.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
     pruned.push(now);
-    rateLimitBuckets.set(ip, pruned);
+    rateLimitBuckets.set(bucketKey, pruned);
 
-    if (ip !== "unknown" && pruned.length > RATE_LIMIT_MAX_REQUESTS) {
+    if (pruned.length > RATE_LIMIT_MAX_REQUESTS) {
       return new Response(
         JSON.stringify({ error: "The veil resists... slow down" }),
         {

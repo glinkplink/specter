@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/config/supabase_config.dart';
@@ -296,6 +297,21 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
     );
 
     try {
+      // Ensure we have a JWT for the edge function without forcing explicit login.
+      final client = Supabase.instance.client;
+      var session = client.auth.currentSession;
+      if (session == null) {
+        try {
+          session = (await client.auth.signInAnonymously()).session;
+        } catch (_) {
+          // If anonymous auth isn't enabled server-side, the edge function will reject the call.
+        }
+      }
+
+      if (session == null) {
+        throw Exception('Not authenticated');
+      }
+
       // Build conversation history for API
       final conversationHistory = state.messages
           .where((m) => m != userMessage)
@@ -313,7 +329,9 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
             Uri.parse(SupabaseConfig.communeFunctionUrl),
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ${SupabaseConfig.supabaseAnonKey}',
+              'Authorization': 'Bearer ${session.accessToken}',
+              // Some deployments expect the apikey header in addition to the JWT.
+              'apikey': SupabaseConfig.supabaseAnonKey,
             },
             body: jsonEncode({
               'message': text.trim(),
