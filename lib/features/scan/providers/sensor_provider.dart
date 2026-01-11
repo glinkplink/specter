@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/audio_service.dart';
 import '../../../core/services/haptic_service.dart';
 import 'sensors_facade.dart';
 
@@ -52,6 +53,9 @@ class SensorNotifier extends StateNotifier<EMFReading> {
   // Haptic service
   final _hapticService = HapticService();
 
+  // Audio service (ticks/spikes)
+  final _audioService = AudioService();
+
   // Baseline values for detecting variance
   final List<double> _magnetometerBaseline = [];
   final List<double> _accelerometerBaseline = [];
@@ -73,6 +77,9 @@ class SensorNotifier extends StateNotifier<EMFReading> {
       return;
     }
 
+    unawaited(_audioService.initialize());
+    _audioService.startTicking(emfLevel: state.currentLevel);
+
     // Subscribe to magnetometer
     _magnetometerSubscription = magnetometerEventStream().listen((event) {
       _lastMagnetometer = event;
@@ -90,6 +97,9 @@ class SensorNotifier extends StateNotifier<EMFReading> {
     _isCalibrated = true; // Skip calibration for mock
     _mockBaseLevel = 15.0;
     _mockDriftDirection = 1.0;
+
+    unawaited(_audioService.initialize());
+    _audioService.startTicking(emfLevel: state.currentLevel);
 
     _mockSensorTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       _generateMockReading();
@@ -123,7 +133,10 @@ class SensorNotifier extends StateNotifier<EMFReading> {
     // Trigger haptic feedback when spike starts (transitions from false to true)
     if (isSpike && !previousSpike) {
       _hapticService.trigger();
+      unawaited(_audioService.playSpike());
     }
+
+    _audioService.updateTickRate(emfLevel);
 
     if (isSpike) {
       _spikeResetTimer?.cancel();
@@ -141,6 +154,7 @@ class SensorNotifier extends StateNotifier<EMFReading> {
   }
 
   void stopScanning() {
+    _audioService.stopTicking();
     _magnetometerSubscription?.cancel();
     _accelerometerSubscription?.cancel();
     _spikeResetTimer?.cancel();
@@ -212,7 +226,10 @@ class SensorNotifier extends StateNotifier<EMFReading> {
     // Trigger haptic feedback when spike starts (transitions from false to true)
     if (isSpike && !previousSpike) {
       _hapticService.trigger();
+      unawaited(_audioService.playSpike());
     }
+
+    _audioService.updateTickRate(emfLevel);
 
     if (isSpike) {
       // Auto-reset spike flag after a short duration

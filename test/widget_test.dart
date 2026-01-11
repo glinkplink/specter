@@ -6,13 +6,14 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:specter/main.dart';
 
 void main() {
   testWidgets('App launches and displays home screen',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const SpecterApp());
+    await tester.pumpWidget(const ProviderScope(child: SpecterApp()));
 
     // Avoid pumpAndSettle: the app has repeating animations.
     await tester.pump(const Duration(milliseconds: 200));

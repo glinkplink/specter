@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/premium_provider.dart';
 import '../../core/providers/haptic_provider.dart';
+import '../../core/providers/audio_provider.dart';
 import '../../shared/widgets/specter_background.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -13,6 +14,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final premiumState = ref.watch(premiumProvider);
+    final audioState = ref.watch(audioProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -98,6 +100,27 @@ class SettingsScreen extends ConsumerWidget {
                   title: 'Haptic Feedback',
                   subtitle: ref.watch(hapticProvider).displayName,
                   onTap: () => _showHapticDialog(context, ref),
+                ),
+              ],
+            ),
+            _buildSettingsSection(
+              context,
+              'Audio',
+              [
+                _buildSettingsTile(
+                  context,
+                  icon: audioState.enabled ? Icons.volume_up : Icons.volume_off,
+                  title: 'Sound',
+                  subtitle: audioState.displayName,
+                  onTap: () => _showSoundDialog(context, ref),
+                  trailing: Switch(
+                    value: audioState.enabled,
+                    onChanged: (value) =>
+                        ref.read(audioProvider.notifier).setEnabled(value),
+                    activeThumbColor: AppColors.amethystGlow,
+                    activeTrackColor:
+                        AppColors.amethystGlow.withValues(alpha: 0.3),
+                  ),
                 ),
               ],
             ),
@@ -260,6 +283,85 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showSoundDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final audioState = ref.watch(audioProvider);
+
+            return AlertDialog(
+              backgroundColor: AppColors.darkPlum,
+              title: Text(
+                'Sound',
+                style: TextStyle(color: AppColors.lavenderWhite),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SwitchListTile(
+                    value: audioState.enabled,
+                    onChanged: (value) async {
+                      await ref.read(audioProvider.notifier).setEnabled(value);
+                      setState(() {});
+                    },
+                    activeThumbColor: AppColors.amethystGlow,
+                    activeTrackColor:
+                        AppColors.amethystGlow.withValues(alpha: 0.3),
+                    title: Text(
+                      'Sound Effects',
+                      style: TextStyle(color: AppColors.lavenderWhite),
+                    ),
+                    subtitle: Text(
+                      audioState.enabled ? 'On' : 'Off',
+                      style: TextStyle(
+                        color: AppColors.mutedLavender.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Opacity(
+                    opacity: audioState.enabled ? 1 : 0.4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Volume',
+                          style: TextStyle(
+                            color:
+                                AppColors.mutedLavender.withValues(alpha: 0.9),
+                          ),
+                        ),
+                        Slider(
+                          value: audioState.volume,
+                          onChanged: audioState.enabled
+                              ? (value) => ref
+                                  .read(audioProvider.notifier)
+                                  .setVolume(value)
+                              : null,
+                          activeColor: AppColors.amethystGlow,
+                          inactiveColor:
+                              AppColors.amethystGlow.withValues(alpha: 0.25),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Done'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

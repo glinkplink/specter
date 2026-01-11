@@ -15,7 +15,37 @@ class AudioService {
   AudioPlayer? _whisperPlayer;
 
   Timer? _tickTimer;
+  int? _currentTickIntervalMs;
   bool _isInitialized = false;
+
+  bool _enabled = true;
+  double _masterVolume = 0.7;
+
+  static const double _tickBaseVolume = 0.18;
+  static const double _spikeBaseVolume = 0.55;
+
+  void updateEnabled(bool enabled) {
+    _enabled = enabled;
+    if (!enabled) {
+      stopTicking();
+      _ambientPlayer?.stop();
+      _radioStaticPlayer?.stop();
+      _communeDronePlayer?.stop();
+    }
+  }
+
+  void updateMasterVolume(double volume) {
+    _masterVolume = volume.clamp(0.0, 1.0);
+    if (_isInitialized) {
+      // Best-effort: keep the loudest sounds (ticks/spikes) in sync with master.
+      unawaited(_tickPlayer
+              ?.setVolume((_tickBaseVolume * _masterVolume).clamp(0.0, 1.0)) ??
+          Future.value());
+      unawaited(_effectPlayer
+              ?.setVolume((_spikeBaseVolume * _masterVolume).clamp(0.0, 1.0)) ??
+          Future.value());
+    }
+  }
 
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -42,6 +72,11 @@ class AudioService {
       await _radioStaticPlayer!.setLoopMode(LoopMode.one);
       await _communeDronePlayer!.setLoopMode(LoopMode.one);
 
+      await _tickPlayer!
+          .setVolume((_tickBaseVolume * _masterVolume).clamp(0.0, 1.0));
+      await _effectPlayer!
+          .setVolume((_spikeBaseVolume * _masterVolume).clamp(0.0, 1.0));
+
       _isInitialized = true;
     } catch (e) {
       // Handle error silently - audio is optional
@@ -49,10 +84,11 @@ class AudioService {
   }
 
   Future<void> playAmbient({double volume = 0.3}) async {
+    if (!_enabled) return;
     if (!_isInitialized) await initialize();
 
     try {
-      await _ambientPlayer?.setVolume(volume);
+      await _ambientPlayer?.setVolume((volume * _masterVolume).clamp(0.0, 1.0));
       await _ambientPlayer?.play();
     } catch (e) {
       // Ignore errors
@@ -76,9 +112,12 @@ class AudioService {
   }
 
   Future<void> playSpike() async {
+    if (!_enabled) return;
     if (!_isInitialized) await initialize();
 
     try {
+      await _effectPlayer
+          ?.setVolume((_spikeBaseVolume * _masterVolume).clamp(0.0, 1.0));
       await _effectPlayer?.seek(Duration.zero);
       await _effectPlayer?.play();
     } catch (e) {
@@ -87,11 +126,25 @@ class AudioService {
   }
 
   void startTicking({required double emfLevel}) {
-    _tickTimer?.cancel();
+    if (!_enabled) return;
 
     // Calculate tick interval based on EMF level
     // Higher level = faster ticks
     final intervalMs = _calculateTickInterval(emfLevel);
+
+    if (_tickTimer != null &&
+        _tickTimer!.isActive &&
+        _currentTickIntervalMs == intervalMs) {
+      return;
+    }
+
+    _tickTimer?.cancel();
+
+    if (!_isInitialized) {
+      unawaited(initialize());
+    }
+
+    _currentTickIntervalMs = intervalMs;
 
     _tickTimer = Timer.periodic(Duration(milliseconds: intervalMs), (timer) {
       _playTick();
@@ -101,6 +154,7 @@ class AudioService {
   void stopTicking() {
     _tickTimer?.cancel();
     _tickTimer = null;
+    _currentTickIntervalMs = null;
   }
 
   Future<void> _playTick() async {
@@ -132,10 +186,12 @@ class AudioService {
 
   // Spirit Box audio methods
   Future<void> playRadioStatic({double volume = 0.3}) async {
+    if (!_enabled) return;
     if (!_isInitialized) await initialize();
 
     try {
-      await _radioStaticPlayer?.setVolume(volume);
+      await _radioStaticPlayer
+          ?.setVolume((volume * _masterVolume).clamp(0.0, 1.0));
       await _radioStaticPlayer?.play();
     } catch (e) {
       // Ignore errors
@@ -151,11 +207,12 @@ class AudioService {
   }
 
   Future<void> playWordBlip() async {
+    if (!_enabled) return;
     if (!_isInitialized) await initialize();
 
     try {
       await _wordBlipPlayer?.seek(Duration.zero);
-      await _wordBlipPlayer?.setVolume(0.5);
+      await _wordBlipPlayer?.setVolume((0.5 * _masterVolume).clamp(0.0, 1.0));
       await _wordBlipPlayer?.play();
     } catch (e) {
       // Ignore errors
@@ -164,10 +221,12 @@ class AudioService {
 
   // Commune audio methods
   Future<void> playCommuneDrone({double volume = 0.2}) async {
+    if (!_enabled) return;
     if (!_isInitialized) await initialize();
 
     try {
-      await _communeDronePlayer?.setVolume(volume);
+      await _communeDronePlayer
+          ?.setVolume((volume * _masterVolume).clamp(0.0, 1.0));
       await _communeDronePlayer?.play();
     } catch (e) {
       // Ignore errors
@@ -184,18 +243,20 @@ class AudioService {
 
   Future<void> setCommuneDroneVolume(double volume) async {
     try {
-      await _communeDronePlayer?.setVolume(volume);
+      await _communeDronePlayer
+          ?.setVolume((volume * _masterVolume).clamp(0.0, 1.0));
     } catch (e) {
       // Ignore errors
     }
   }
 
   Future<void> playWhisper() async {
+    if (!_enabled) return;
     if (!_isInitialized) await initialize();
 
     try {
       await _whisperPlayer?.seek(Duration.zero);
-      await _whisperPlayer?.setVolume(0.4);
+      await _whisperPlayer?.setVolume((0.4 * _masterVolume).clamp(0.0, 1.0));
       await _whisperPlayer?.play();
     } catch (e) {
       // Ignore errors

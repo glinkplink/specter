@@ -33,6 +33,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
 
   @override
   void dispose() {
+    _audioService.stopCommuneDrone();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -199,6 +200,16 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
     ref.listen<CommuneState>(communeProvider, (previous, next) {
       final prevLength = previous?.messages.length ?? 0;
       final nextLength = next.messages.length;
+
+      final wasActive = previous?.isSessionActive ?? false;
+      final isActive = next.isSessionActive;
+      if (!wasActive && isActive) {
+        unawaited(_audioService.playCommuneDrone(volume: 0.16));
+      }
+      if (wasActive && !isActive) {
+        unawaited(_audioService.stopCommuneDrone());
+      }
+
       if (prevLength != nextLength) {
         _scrollToBottom();
 
@@ -207,6 +218,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
           final lastMessage = next.messages.last;
           if (lastMessage.role == MessageRole.spirit) {
             _hapticService.trigger(); // Haptic for spirit messages
+            unawaited(_audioService.playWhisper());
           }
         }
       }

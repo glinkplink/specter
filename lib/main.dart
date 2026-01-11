@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/config/supabase_config.dart';
+import 'core/providers/audio_provider.dart';
+import 'core/providers/haptic_provider.dart';
 
 void main() async {
   // Required for async operations before runApp (e.g., SharedPreferences)
@@ -34,11 +36,15 @@ void main() async {
   );
 }
 
-class SpecterApp extends StatelessWidget {
+class SpecterApp extends ConsumerWidget {
   const SpecterApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Eagerly load persisted settings so the services are configured before use.
+    ref.watch(audioProvider);
+    ref.watch(hapticProvider);
+
     return MaterialApp.router(
       title: 'Specter',
       debugShowCheckedModeBanner: false,
