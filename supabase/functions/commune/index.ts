@@ -2,6 +2,15 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
+// Basic abuse controls. These are best-effort (per Edge Function instance).
+const MAX_MESSAGE_CHARS = 400;
+const MAX_HISTORY_MESSAGES = 12;
+const MAX_HISTORY_MESSAGE_CHARS = 300;
+
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 30;
+const rateLimitBuckets = new Map<string, number[]>();
+
 const SYSTEM_PROMPT = `You are a spirit communicating through a ghost-hunting app. You MUST directly respond to what the user says, but in a cryptic, fragmented way.
 
 CRITICAL RULE - RESPOND TO THE USER:
@@ -95,6 +104,40 @@ serve(async (req: Request) => {
   }
 
   try {
+    if (!OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is missing");
+      return new Response(JSON.stringify({ error: "Service misconfigured" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Best-effort IP-based rate limit to prevent casual abuse.
+    const forwardedFor = req.headers.get("x-forwarded-for") ?? "";
+    const ip =
+      forwardedFor.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      "unknown";
+
+    const now = Date.now();
+    const bucket = rateLimitBuckets.get(ip) ?? [];
+    const pruned = bucket.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+    pruned.push(now);
+    rateLimitBuckets.set(ip, pruned);
+
+    if (ip !== "unknown" && pruned.length > RATE_LIMIT_MAX_REQUESTS) {
+      return new Response(
+        JSON.stringify({ error: "The veil resists... slow down" }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
     const body: RequestBody = await req.json();
     const { message, conversation_history, seance_audio_recorded } = body;
 
@@ -105,6 +148,43 @@ serve(async (req: Request) => {
       });
     }
 
+    if (typeof message !== "string" || message.length > MAX_MESSAGE_CHARS) {
+      return new Response(
+        JSON.stringify({ error: "Message too long" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (!Array.isArray(conversation_history)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid conversation history" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (conversation_history.length > MAX_HISTORY_MESSAGES) {
+      return new Response(
+        JSON.stringify({ error: "Conversation history too long" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const sanitizedHistory = conversation_history
+      .filter((m) => m && (m.role === "user" || m.role === "assistant"))
+      .map((m) => ({
+        role: m.role,
+        content: String(m.content ?? "").slice(0, MAX_HISTORY_MESSAGE_CHARS),
+      }));
+
     // Build the user message with séance context if applicable
     let userMessage = message;
     if (seance_audio_recorded) {
@@ -114,7 +194,7 @@ serve(async (req: Request) => {
     // Build messages array for OpenAI
     const messages = [
       { role: "system", content: SYSTEM_PROMPT },
-      ...conversation_history,
+      ...sanitizedHistory,
       { role: "user", content: userMessage },
     ];
 
@@ -134,8 +214,10 @@ serve(async (req: Request) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("OpenAI API error:", errorText);
+      console.error("OpenAI API error", {
+        status: response.status,
+        statusText: response.statusText,
+      });
       return new Response(
         JSON.stringify({ error: "Failed to communicate with spirit realm" }),
         {
