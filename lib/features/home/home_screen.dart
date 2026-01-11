@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import 'widgets/daily_veil_card.dart';
 import 'widgets/rotating_moon.dart';
+import 'widgets/shooting_star.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -35,10 +36,13 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           
-          // Floating particles
-          ...List.generate(15, (index) => _buildFloatingParticle(index)),
+          // Starfield (behind everything)
+          ...List.generate(36, (index) => _buildStar(index)),
           
-          // Content
+          // Shooting stars (behind content, occasional)
+          ...List.generate(2, (index) => ShootingStar(key: ValueKey('star_$index'), index: index)),
+          
+          // Content (on top of stars/shooting stars)
           SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -141,7 +145,7 @@ class HomeScreen extends StatelessWidget {
                       context,
                       icon: Icons.auto_awesome,
                       title: 'Commune',
-                      subtitle: 'Speak with those who linger',
+                      subtitle: 'Speak with those who linger · 3 free sessions',
                       onTap: () => context.go('/commune'),
                       isPremium: true,
                     )
@@ -155,6 +159,9 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+          
+          // Floating particles (on top for depth)
+          ...List.generate(15, (index) => _buildFloatingParticle(index)),
         ],
       ),
     );
@@ -172,6 +179,46 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // Star in the sky
+  Widget _buildStar(int index) {
+    final random = Random(index + 100);
+    final size = 1.0 + random.nextDouble() * 2.5;
+    final left = random.nextDouble();
+    final top = random.nextDouble() * 0.4; // Top 40% of screen
+    final twinkleDuration = 2 + random.nextInt(4);
+    final delay = random.nextInt(3);
+    
+    return Positioned.fill(
+      child: Align(
+        alignment: Alignment(
+          left * 2 - 1,
+          top * 2 - 1,
+        ),
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.lavenderWhite.withOpacity(0.8),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.lavenderWhite.withOpacity(0.6),
+                blurRadius: 2,
+              ),
+            ],
+          ),
+        )
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(
+              duration: Duration(seconds: twinkleDuration),
+              delay: Duration(seconds: delay),
+            )
+            .then()
+            .fadeOut(duration: Duration(seconds: twinkleDuration)),
+      ),
+    );
+  }
+
   // Floating particle effect
   Widget _buildFloatingParticle(int index) {
     final random = Random(index);
@@ -182,8 +229,8 @@ class HomeScreen extends StatelessWidget {
     return Positioned.fill(
       child: Align(
         alignment: Alignment(
-          random.nextDouble() * 2 - 1, // -1 to 1 (left to right)
-          random.nextDouble() * 2 - 1, // -1 to 1 (top to bottom)
+          random.nextDouble() * 2 - 1,
+          random.nextDouble() * 2 - 1,
         ),
         child: Container(
           width: size,
