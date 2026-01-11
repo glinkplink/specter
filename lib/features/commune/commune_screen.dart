@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/services/audio_service.dart';
+import '../../core/services/haptic_service.dart';
 import 'providers/commune_provider.dart';
 import 'widgets/spirit_message_bubble.dart';
 import 'widgets/user_message_bubble.dart';
@@ -22,6 +23,7 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   final _audioService = AudioService();
+  final _hapticService = HapticService();
 
   @override
   void initState() {
@@ -193,6 +195,14 @@ class _CommuneScreenState extends ConsumerState<CommuneScreen> {
       final nextLength = next.messages.length;
       if (prevLength != nextLength) {
         _scrollToBottom();
+        
+        // Detect new spirit messages and trigger haptic
+        if (nextLength > prevLength) {
+          final lastMessage = next.messages.last;
+          if (lastMessage.role == MessageRole.spirit) {
+            _hapticService.trigger(); // Haptic for spirit messages
+          }
+        }
       }
       
       // Show summary when session auto-ends

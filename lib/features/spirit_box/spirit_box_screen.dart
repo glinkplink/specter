@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/services/audio_service.dart';
+import '../../core/services/haptic_service.dart';
 import 'providers/spirit_box_provider.dart';
 import 'widgets/frequency_display.dart';
 import 'widgets/word_display.dart';
@@ -17,6 +18,7 @@ class SpiritBoxScreen extends ConsumerStatefulWidget {
 
 class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
   final _audioService = AudioService();
+  final _hapticService = HapticService();
   String? _previousWord;
 
   @override
@@ -51,6 +53,7 @@ class _SpiritBoxScreenState extends ConsumerState<SpiritBoxScreen> {
     if (spiritBoxState.currentWord != null &&
         spiritBoxState.currentWord != _previousWord) {
       _audioService.playWordBlip();
+      _hapticService.triggerLight(); // Light haptic for words
       _previousWord = spiritBoxState.currentWord;
     }
 

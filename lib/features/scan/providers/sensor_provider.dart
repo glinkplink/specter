@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import '../../../core/services/haptic_service.dart';
 
 class EMFReading {
   final double currentLevel;
@@ -47,6 +48,9 @@ class SensorNotifier extends StateNotifier<EMFReading> {
   double _mockBaseLevel = 15.0;
   double _mockDriftDirection = 1.0;
   final _random = Random();
+  
+  // Haptic service
+  final _hapticService = HapticService();
 
   // Baseline values for detecting variance
   final List<double> _magnetometerBaseline = [];
@@ -112,8 +116,14 @@ class SensorNotifier extends StateNotifier<EMFReading> {
     emfLevel = emfLevel.clamp(0, 100);
 
     final previousLevel = state.currentLevel;
+    final previousSpike = state.isSpike;
     final levelChange = (emfLevel - previousLevel).abs();
     final bool isSpike = levelChange > 25 || emfLevel > 70;
+
+    // Trigger haptic feedback when spike starts (transitions from false to true)
+    if (isSpike && !previousSpike) {
+      _hapticService.trigger();
+    }
 
     if (isSpike) {
       _spikeResetTimer?.cancel();
@@ -193,8 +203,14 @@ class SensorNotifier extends StateNotifier<EMFReading> {
 
     // Detect spikes (sudden changes)
     final previousLevel = state.currentLevel;
+    final previousSpike = state.isSpike;
     final levelChange = (emfLevel - previousLevel).abs();
     final bool isSpike = levelChange > 25 || emfLevel > 70;
+
+    // Trigger haptic feedback when spike starts (transitions from false to true)
+    if (isSpike && !previousSpike) {
+      _hapticService.trigger();
+    }
 
     if (isSpike) {
       // Auto-reset spike flag after a short duration

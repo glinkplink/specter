@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/premium_provider.dart';
+import '../../core/providers/haptic_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -95,17 +96,10 @@ class SettingsScreen extends ConsumerWidget {
             [
               _buildSettingsTile(
                 context,
-                icon: Icons.sensors,
-                title: 'Sensitivity',
-                subtitle: 'Adjust detection sensitivity',
-                onTap: () {},
-              ),
-              _buildSettingsTile(
-                context,
                 icon: Icons.vibration,
                 title: 'Haptic Feedback',
-                subtitle: 'Enable vibration alerts',
-                onTap: () {},
+                subtitle: ref.watch(hapticProvider).displayName,
+                onTap: () => _showHapticDialog(context, ref),
               ),
             ],
           ),
@@ -115,29 +109,9 @@ class SettingsScreen extends ConsumerWidget {
             [
               _buildSettingsTile(
                 context,
-                icon: Icons.smart_toy,
-                title: 'AI Model',
-                subtitle: 'Choose LLM for spirit communication',
-                onTap: () {},
-              ),
-              _buildSettingsTile(
-                context,
                 icon: Icons.history,
                 title: 'Chat History',
                 subtitle: 'View past conversations',
-                onTap: () {},
-              ),
-            ],
-          ),
-          _buildSettingsSection(
-            context,
-            'Appearance',
-            [
-              _buildSettingsTile(
-                context,
-                icon: Icons.dark_mode,
-                title: 'Theme',
-                subtitle: 'Dark mode (Ghost mode enabled)',
                 onTap: () {},
               ),
             ],
@@ -150,7 +124,7 @@ class SettingsScreen extends ConsumerWidget {
                 context,
                 icon: Icons.info,
                 title: 'Version',
-                subtitle: '1.0.0 - Sprint 5',
+                subtitle: '1.0.0',
                 onTap: () {},
               ),
             ],
@@ -216,6 +190,74 @@ class SettingsScreen extends ConsumerWidget {
             color: AppColors.dimLavender,
           ),
       onTap: onTap,
+    );
+  }
+
+  void _showHapticDialog(BuildContext context, WidgetRef ref) {
+    final currentLevel = ref.read(hapticProvider).level;
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.darkPlum,
+        title: Text(
+          'Haptic Feedback',
+          style: TextStyle(color: AppColors.lavenderWhite),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHapticOption(
+              context,
+              ref,
+              HapticLevel.low,
+              'Low',
+              currentLevel == HapticLevel.low,
+            ),
+            const SizedBox(height: 8),
+            _buildHapticOption(
+              context,
+              ref,
+              HapticLevel.medium,
+              'Medium',
+              currentLevel == HapticLevel.medium,
+            ),
+            const SizedBox(height: 8),
+            _buildHapticOption(
+              context,
+              ref,
+              HapticLevel.high,
+              'High',
+              currentLevel == HapticLevel.high,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHapticOption(
+    BuildContext context,
+    WidgetRef ref,
+    HapticLevel level,
+    String label,
+    bool isSelected,
+  ) {
+    return ListTile(
+      title: Text(
+        label,
+        style: TextStyle(
+          color: isSelected ? AppColors.amethystGlow : AppColors.lavenderWhite,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      trailing: isSelected
+          ? Icon(Icons.check, color: AppColors.amethystGlow)
+          : null,
+      onTap: () {
+        ref.read(hapticProvider.notifier).setLevel(level);
+        Navigator.of(context).pop();
+      },
     );
   }
 }
