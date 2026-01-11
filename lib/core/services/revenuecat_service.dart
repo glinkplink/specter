@@ -34,7 +34,7 @@ class RevenueCatService {
       if (kIsWeb) {
         // RevenueCat doesn't support web
         if (kDebugMode) {
-          print('RevenueCat: Web platform detected, skipping initialization');
+          debugPrint('RevenueCat: Web platform detected, skipping init');
         }
         return;
       }
@@ -52,7 +52,7 @@ class RevenueCatService {
         configuration = PurchasesConfiguration(RevenueCatConfig.googleApiKey);
       } else {
         if (kDebugMode) {
-          print('RevenueCat: Unsupported platform $defaultTargetPlatform');
+          debugPrint('RevenueCat: Unsupported platform $defaultTargetPlatform');
         }
         return;
       }
@@ -61,11 +61,11 @@ class RevenueCatService {
       _isInitialized = true;
 
       if (kDebugMode) {
-        print('RevenueCat: Initialized successfully on $defaultTargetPlatform');
+        debugPrint('RevenueCat: Initialized on $defaultTargetPlatform');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Initialization failed - $e');
+        debugPrint('RevenueCat: Initialization failed - $e');
       }
       rethrow;
     }
@@ -90,13 +90,13 @@ class RevenueCatService {
       await _cachePremiumStatus(isPremium);
 
       if (kDebugMode) {
-        print('RevenueCat: Premium status checked - $isPremium');
+        debugPrint('RevenueCat: Premium status checked - $isPremium');
       }
 
       return isPremium;
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Failed to check premium status - $e');
+        debugPrint('RevenueCat: Failed to check premium status - $e');
       }
       // Fallback to cached status
       return await _getCachedPremiumStatus();
@@ -112,13 +112,13 @@ class RevenueCatService {
     try {
       final offerings = await Purchases.getOfferings();
       if (kDebugMode) {
-        print(
-            'RevenueCat: Fetched offerings - ${offerings.current?.availablePackages.length ?? 0} packages');
+        debugPrint(
+            'RevenueCat: Fetched offerings (${offerings.current?.availablePackages.length ?? 0} packages)');
       }
       return offerings;
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Failed to fetch offerings - $e');
+        debugPrint('RevenueCat: Failed to fetch offerings - $e');
       }
       return null;
     }
@@ -135,7 +135,7 @@ class RevenueCatService {
 
     try {
       if (kDebugMode) {
-        print('RevenueCat: Purchasing package ${package.identifier}');
+        debugPrint('RevenueCat: Purchasing package');
       }
 
       final customerInfo = await Purchases.purchasePackage(package);
@@ -146,13 +146,13 @@ class RevenueCatService {
       await _cachePremiumStatus(isPremium);
 
       if (kDebugMode) {
-        print('RevenueCat: Purchase completed - isPremium: $isPremium');
+        debugPrint('RevenueCat: Purchase completed - isPremium: $isPremium');
       }
 
       return isPremium;
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Purchase failed - $e');
+        debugPrint('RevenueCat: Purchase failed - $e');
       }
       rethrow;
     }
@@ -169,7 +169,7 @@ class RevenueCatService {
 
     try {
       if (kDebugMode) {
-        print('RevenueCat: Restoring purchases');
+        debugPrint('RevenueCat: Restoring purchases');
       }
 
       final customerInfo = await Purchases.restorePurchases();
@@ -180,13 +180,13 @@ class RevenueCatService {
       await _cachePremiumStatus(isPremium);
 
       if (kDebugMode) {
-        print('RevenueCat: Restore completed - isPremium: $isPremium');
+        debugPrint('RevenueCat: Restore completed - isPremium: $isPremium');
       }
 
       return isPremium;
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Restore failed - $e');
+        debugPrint('RevenueCat: Restore failed - $e');
       }
       rethrow;
     }
@@ -204,7 +204,7 @@ class RevenueCatService {
       );
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Failed to cache premium status - $e');
+        debugPrint('RevenueCat: Failed to cache premium status - $e');
       }
     }
   }
@@ -214,12 +214,12 @@ class RevenueCatService {
       final prefs = await SharedPreferences.getInstance();
       final cached = prefs.getBool(RevenueCatConfig.premiumCacheKey) ?? false;
       if (kDebugMode) {
-        print('RevenueCat: Using cached premium status - $cached');
+        debugPrint('RevenueCat: Using cached premium status - $cached');
       }
       return cached;
     } catch (e) {
       if (kDebugMode) {
-        print('RevenueCat: Failed to get cached status - $e');
+        debugPrint('RevenueCat: Failed to get cached status - $e');
       }
       return false;
     }

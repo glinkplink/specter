@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// RevenueCat configuration for in-app purchases and subscriptions
 ///
 /// API Keys Setup:
@@ -28,8 +30,8 @@ class RevenueCatConfig {
   static const String premiumCacheKey = 'premium_status_cache';
   static const String lastCheckCacheKey = 'premium_last_check';
 
-  // Debug logging - Set to false in production
-  static const bool enableDebugLogs = true;
+  // Debug logging - off in release builds
+  static bool get enableDebugLogs => kDebugMode;
 
   // Prevent instantiation
   RevenueCatConfig._();
