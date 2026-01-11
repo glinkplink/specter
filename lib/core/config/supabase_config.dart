@@ -1,8 +1,14 @@
 class SupabaseConfig {
   static const String supabaseUrl = 'https://vvavgomyvhqkbfvbsusw.supabase.co';
 
-  // Anon key is safe to embed - it's public and RLS protects data
-  static const String supabaseAnonKey = '**********************************************';
+  static String get supabaseAnonKey {
+    const key = String.fromEnvironment('SUPABASE_ANON_KEY');
+    if (key.isEmpty) {
+      throw StateError(
+          'SUPABASE_ANON_KEY is not set. Run with --dart-define=SUPABASE_ANON_KEY=...');
+    }
+    return key;
+  }
 
   static const String communeFunctionUrl = '$supabaseUrl/functions/v1/commune';
 
