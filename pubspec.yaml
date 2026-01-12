@@ -50,6 +50,10 @@ dependencies:
   # Sensors
   sensors_plus: ^7.0.0
 
+  # Location services
+  geolocator: ^13.0.0
+  geocoding: ^3.0.0
+
   # Audio
   just_audio: ^0.9.42
 

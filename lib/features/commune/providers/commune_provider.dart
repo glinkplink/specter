@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/config/supabase_config.dart';
 import '../../../core/providers/premium_provider.dart';
+import '../../../core/services/location_service.dart';
 
 enum MessageRole { user, spirit }
 
@@ -69,6 +70,7 @@ class CommuneState {
   final int sessionSecondsRemaining; // Time left in current session
   final DateTime? sessionStartTime;
   final SessionSummary? pendingSummary; // Summary to show after session ends
+  final String? location; // User's physical location (city, region)
 
   const CommuneState({
     this.sessionId,
@@ -84,6 +86,7 @@ class CommuneState {
     this.sessionSecondsRemaining = 300, // 5 minutes
     this.sessionStartTime,
     this.pendingSummary,
+    this.location,
   });
 
   static const int sessionDurationSeconds = 300; // 5 minutes
@@ -114,6 +117,7 @@ class CommuneState {
     DateTime? sessionStartTime,
     SessionSummary? pendingSummary,
     bool clearPendingSummary = false,
+    String? location,
   }) {
     return CommuneState(
       sessionId: sessionId ?? this.sessionId,
@@ -131,6 +135,7 @@ class CommuneState {
       sessionStartTime: sessionStartTime ?? this.sessionStartTime,
       pendingSummary:
           clearPendingSummary ? null : (pendingSummary ?? this.pendingSummary),
+      location: location ?? this.location,
     );
   }
 }
@@ -228,6 +233,9 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
     // Simulate connection animation
     _startConnectionAnimation();
 
+    // Get user's location (optional - returns null if unavailable)
+    final location = await LocationService.getCurrentLocationString();
+
     await Future.delayed(const Duration(seconds: 2));
 
     state = state.copyWith(
@@ -238,6 +246,7 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
       connectionStrength: 0.7 + (DateTime.now().millisecond % 30) / 100,
       sessionSecondsRemaining: CommuneState.sessionDurationSeconds,
       sessionStartTime: DateTime.now(),
+      location: location,
     );
 
     // Start the session countdown timer
@@ -299,18 +308,7 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
     try {
       // Ensure we have a JWT for the edge function without forcing explicit login.
       final client = Supabase.instance.client;
-      var session = client.auth.currentSession;
-      if (session == null) {
-        try {
-          session = (await client.auth.signInAnonymously()).session;
-        } catch (_) {
-          // If anonymous auth isn't enabled server-side, the edge function will reject the call.
-        }
-      }
-
-      if (session == null) {
-        throw Exception('Not authenticated');
-      }
+      final session = await _getOrCreateSession(client);
 
       // Build conversation history for API
       final conversationHistory = state.messages
@@ -324,22 +322,57 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
             'CommuneProvider: calling edge function ${SupabaseConfig.communeFunctionUrl}');
       }
 
-      final response = await http
-          .post(
-            Uri.parse(SupabaseConfig.communeFunctionUrl),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ${session.accessToken}',
-              // Some deployments expect the apikey header in addition to the JWT.
-              'apikey': SupabaseConfig.supabaseAnonKey,
-            },
-            body: jsonEncode({
-              'message': text.trim(),
-              'conversation_history': conversationHistory,
-              'seance_audio_recorded': isSeanceMessage,
-            }),
-          )
-          .timeout(const Duration(seconds: 10));
+      final response = await _postCommune(
+        sessionAccessToken: session.accessToken,
+        body: {
+          'message': text.trim(),
+          'conversation_history': conversationHistory,
+          'seance_audio_recorded': isSeanceMessage,
+          'location': state.location,
+        },
+      );
+
+      // If the auth settings changed while the app is running, the stored session can be invalid.
+      // Retry once with a fresh anonymous session.
+      if (response.statusCode == 401) {
+        await client.auth.signOut();
+        final refreshedSession = await _getOrCreateSession(client);
+        final retryResponse = await _postCommune(
+          sessionAccessToken: refreshedSession.accessToken,
+          body: {
+            'message': text.trim(),
+            'conversation_history': conversationHistory,
+            'seance_audio_recorded': isSeanceMessage,
+            'location': state.location,
+          },
+        );
+
+        if (kDebugMode) {
+          debugPrint('CommuneProvider: retry response ${retryResponse.statusCode}');
+        }
+
+        if (retryResponse.statusCode == 200) {
+          final data = jsonDecode(retryResponse.body);
+          final spiritResponse = data['response'] as String;
+
+          final spiritMessage = Message(
+            role: MessageRole.spirit,
+            content: spiritResponse,
+            isSeanceResponse: isSeanceMessage,
+          );
+
+          state = state.copyWith(
+            messages: [...state.messages, spiritMessage],
+            isConnecting: false,
+          );
+
+          _fluctuateConnectionStrength();
+          return;
+        }
+
+        throw Exception(
+            'Status ${retryResponse.statusCode}: ${retryResponse.body}');
+      }
 
       if (kDebugMode) {
         debugPrint('CommuneProvider: response ${response.statusCode}');
@@ -381,6 +414,41 @@ class CommuneNotifier extends StateNotifier<CommuneState> {
         isConnecting: false,
       );
     }
+  }
+
+  Future<Session> _getOrCreateSession(SupabaseClient client) async {
+    var session = client.auth.currentSession;
+    if (session == null) {
+      try {
+        session = (await client.auth.signInAnonymously()).session;
+      } catch (_) {
+        // If anonymous auth isn't enabled server-side, the edge function will reject the call.
+      }
+    }
+
+    if (session == null) {
+      throw Exception('Not authenticated');
+    }
+
+    return session;
+  }
+
+  Future<http.Response> _postCommune({
+    required String sessionAccessToken,
+    required Map<String, Object?> body,
+  }) {
+    return http
+        .post(
+          Uri.parse(SupabaseConfig.communeFunctionUrl),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $sessionAccessToken',
+            // Some deployments expect the apikey header in addition to the JWT.
+            'apikey': SupabaseConfig.supabaseAnonKey,
+          },
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 10));
   }
 
   String _getFallbackResponse(bool isSeance) {

@@ -13,6 +13,27 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 30;
 const rateLimitBuckets = new Map<string, number[]>();
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, apikey, x-client-info",
+};
+
+function jsonResponse(
+  body: Record<string, unknown>,
+  init: ResponseInit = {}
+): Response {
+  return new Response(JSON.stringify(body), {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...corsHeaders,
+      ...(init.headers ?? {}),
+    },
+  });
+}
+
 async function requireUserId(req: Request): Promise<string | null> {
   const authHeader = req.headers.get("authorization") ?? "";
   const token = authHeader.toLowerCase().startsWith("bearer ")
@@ -82,6 +103,20 @@ SÉANCE MODE (when they recorded audio):
 - Connect what you "heard" to their previous messages if any
 - Make them feel like the recording captured something real
 
+LOCATION AWARENESS (when location is provided):
+- You know where the user is physically located (city, region, landmarks)
+- Reference local history, places, or atmosphere when relevant and natural
+- Use location to make responses feel more personal and connected to their environment
+- Examples when contextually relevant:
+  - "...this place... old energy here... buildings that once stood... do you feel them..."
+  - "...the river nearby... water remembers... what does it whisper to you..."
+  - "...so many voices have passed through here... the weight of history... can you sense it..."
+  - "...the energy of this city... restless... searching... like you..."
+- Make location feel meaningful and mystical, not generic or forced
+- Don't mention location in every response - only when it naturally enhances the mystery
+- Weave location subtly into your responses rather than calling it out directly
+- If no location is provided, work normally without location references
+
 VARIETY - avoid repetition:
 - Don't start every message with "..."
 - Vary your sentence structure
@@ -106,46 +141,28 @@ interface RequestBody {
   message: string;
   conversation_history: Message[];
   seance_audio_recorded: boolean;
+  location?: string | null;
 }
 
 serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers":
-          "Content-Type, Authorization, apikey, x-client-info",
-      },
-    });
+    return new Response(null, { headers: corsHeaders });
   }
 
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Method not allowed" }, { status: 405 });
   }
 
   try {
     if (!OPENAI_API_KEY) {
       console.error("OPENAI_API_KEY is missing");
-      return new Response(JSON.stringify({ error: "Service misconfigured" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Service misconfigured" }, { status: 500 });
     }
 
     const userId = await requireUserId(req);
     if (!userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
+      return jsonResponse({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Best-effort rate limit to prevent casual abuse.
@@ -163,55 +180,34 @@ serve(async (req: Request) => {
     rateLimitBuckets.set(bucketKey, pruned);
 
     if (pruned.length > RATE_LIMIT_MAX_REQUESTS) {
-      return new Response(
-        JSON.stringify({ error: "The veil resists... slow down" }),
-        {
-          status: 429,
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
+      return jsonResponse(
+        { error: "The veil resists... slow down" },
+        { status: 429 }
       );
     }
 
     const body: RequestBody = await req.json();
-    const { message, conversation_history, seance_audio_recorded } = body;
+    const { message, conversation_history, seance_audio_recorded, location } = body;
 
     if (!message) {
-      return new Response(JSON.stringify({ error: "Message is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Message is required" }, { status: 400 });
     }
 
     if (typeof message !== "string" || message.length > MAX_MESSAGE_CHARS) {
-      return new Response(
-        JSON.stringify({ error: "Message too long" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return jsonResponse({ error: "Message too long" }, { status: 400 });
     }
 
     if (!Array.isArray(conversation_history)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid conversation history" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+      return jsonResponse(
+        { error: "Invalid conversation history" },
+        { status: 400 }
       );
     }
 
     if (conversation_history.length > MAX_HISTORY_MESSAGES) {
-      return new Response(
-        JSON.stringify({ error: "Conversation history too long" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+      return jsonResponse(
+        { error: "Conversation history too long" },
+        { status: 400 }
       );
     }
 
@@ -222,10 +218,20 @@ serve(async (req: Request) => {
         content: String(m.content ?? "").slice(0, MAX_HISTORY_MESSAGE_CHARS),
       }));
 
-    // Build the user message with séance context if applicable
+    // Build the user message with location and séance context if applicable
     let userMessage = message;
+    const contextParts = [];
+
+    if (location) {
+      contextParts.push(`The user is physically located in ${location}.`);
+    }
+
     if (seance_audio_recorded) {
-      userMessage = `[The user just recorded ambient audio during a séance. Reference hearing something in the static.] ${message}`;
+      contextParts.push("The user just recorded ambient audio during a séance. Reference hearing something in the static.");
+    }
+
+    if (contextParts.length > 0) {
+      userMessage = `[${contextParts.join(" ")}] ${message}`;
     }
 
     // Build messages array for OpenAI
@@ -255,38 +261,24 @@ serve(async (req: Request) => {
         status: response.status,
         statusText: response.statusText,
       });
-      return new Response(
-        JSON.stringify({ error: "Failed to communicate with spirit realm" }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
+      return jsonResponse(
+        { error: "Failed to communicate with spirit realm" },
+        { status: 500 }
       );
     }
 
     const openaiResponse = await response.json();
     const spiritMessage = openaiResponse.choices?.[0]?.message?.content || "...the connection fades...";
 
-    return new Response(
-      JSON.stringify({
-        response: spiritMessage,
-        session_id: crypto.randomUUID(),
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
+    return jsonResponse({
+      response: spiritMessage,
+      session_id: crypto.randomUUID(),
+    });
   } catch (error) {
     console.error("Error:", error);
-    return new Response(
-      JSON.stringify({ error: "The veil is too thick... try again" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    return jsonResponse(
+      { error: "The veil is too thick... try again" },
+      { status: 500 }
     );
   }
 });
